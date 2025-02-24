@@ -10,8 +10,21 @@ import (
 	"github.com/sjdaws/pkg/oauth/providers/plex"
 )
 
-// New create an Authenticator instance.
-func New(provider string, callbackURL string, clientID string, clientSecret string, options map[string]string) (providers.Authenticator, error) {
+// ProviderFactory interface.
+type ProviderFactory interface {
+	Get(provider string, callbackURL string, clientID string, clientSecret string, options map[string]string) (providers.Authenticator, error)
+}
+
+// Factory instance for ProviderFactory.
+type Factory struct{}
+
+// New create a ProviderFactory.
+func New() ProviderFactory {
+	return &Factory{}
+}
+
+// Get a provider from a Factory.
+func (f *Factory) Get(provider string, callbackURL string, clientID string, clientSecret string, options map[string]string) (providers.Authenticator, error) {
 	var authenticator providers.Authenticator
 
 	switch provider {

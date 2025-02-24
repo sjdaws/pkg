@@ -10,6 +10,13 @@ import (
 )
 
 func TestNew(t *testing.T) {
+	factory := oauth.New()
+
+	require.IsType(t, &oauth.Factory{}, factory)
+	require.Implements(t, (*oauth.ProviderFactory)(nil), factory)
+}
+
+func TestFactory_Get(t *testing.T) {
 	t.Parallel()
 
 	// test all providers
@@ -25,7 +32,9 @@ func TestNew(t *testing.T) {
 		t.Run(provider, func(t *testing.T) {
 			t.Parallel()
 
-			authenticator, err := oauth.New(provider, "", "", "", nil)
+			factory := oauth.New()
+
+			authenticator, err := factory.Get(provider, "", "", "", nil)
 			require.NoError(t, err)
 
 			assert.NotNil(t, authenticator)
@@ -33,10 +42,10 @@ func TestNew(t *testing.T) {
 	}
 }
 
-func TestProviderFactory_Get_ErrInvalidProvider(t *testing.T) {
-	t.Parallel()
+func TestFactory_Get_ErrInvalidProvider(t *testing.T) {
+	factory := oauth.New()
 
-	authenticator, err := oauth.New("invalid", "", "", "", nil)
+	authenticator, err := factory.Get("invalid", "", "", "", nil)
 	require.Error(t, err)
 
 	require.EqualError(t, err, "unsupported authentication provider requested: invalid")
