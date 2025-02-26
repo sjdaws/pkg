@@ -8,17 +8,29 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/sjdaws/pkg/http/server"
-	"github.com/sjdaws/pkg/http/server/routes"
 	"github.com/sjdaws/pkg/testing/logging/logmock"
 )
 
 func TestNew(t *testing.T) {
 	t.Parallel()
 
-	router := routes.New()
-	router.Add("index", http.MethodGet, "/", func(_ echo.Context) error { return nil })
-	router.Static("assets", "/assets", "/directory")
-	router.SetErrorHandler(func(_ error, _ echo.Context) {})
+	router := &routerMock{
+		errorHandler: func(_ error, _ echo.Context) {},
+		routes: map[string]server.Route{
+			"assets": {
+				Directory: "/directory",
+				Handler:   nil,
+				Methods:   nil,
+				Path:      "/assets",
+			},
+			"index": {
+				Directory: "",
+				Handler:   func(_ echo.Context) error { return nil },
+				Methods:   []string{http.MethodGet},
+				Path:      "/",
+			},
+		},
+	}
 
 	actual := server.New(logmock.New(), router)
 
@@ -26,7 +38,7 @@ func TestNew(t *testing.T) {
 		{
 			Method: http.MethodGet,
 			Path:   "/",
-			Name:   "github.com/sjdaws/pkg/http/server_test.TestNew.func1",
+			Name:   "github.com/sjdaws/pkg/http/server_test.TestNew.func2",
 		},
 		{
 			Method: http.MethodGet,
@@ -34,4 +46,17 @@ func TestNew(t *testing.T) {
 			Name:   "github.com/labstack/echo/v4.(*Echo).Static.StaticDirectoryHandler.func1",
 		},
 	}, actual.Routes())
+}
+
+type routerMock struct {
+	errorHandler echo.HTTPErrorHandler
+	routes       map[string]server.Route
+}
+
+func (r *routerMock) GetErrorHandler() echo.HTTPErrorHandler {
+	return r.errorHandler
+}
+
+func (r *routerMock) GetRoutes() map[string]server.Route {
+	return r.routes
 }

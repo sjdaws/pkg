@@ -8,7 +8,6 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/sjdaws/pkg/errors"
-
 	"github.com/sjdaws/pkg/testing/io/readwritermock"
 )
 

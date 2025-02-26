@@ -1,7 +1,6 @@
 package providers_test
 
 import (
-	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -63,7 +62,7 @@ func TestOAuth2_Authenticate(t *testing.T) {
 		},
 	}
 
-	user, err := authenticator.Authenticate(context.TODO(), "code", "", "verifier")
+	user, err := authenticator.Authenticate(t.Context(), "code", "", "verifier")
 	require.NoError(t, err)
 
 	expected := &providers.UserData{
@@ -93,7 +92,7 @@ func TestOAuth2_Authenticate_ErrInvalidToken(t *testing.T) {
 		Config: &oauth2.Config{},
 	}
 
-	user, err := authenticator.Authenticate(context.TODO(), "", "", "")
+	user, err := authenticator.Authenticate(t.Context(), "", "", "")
 	require.Error(t, err)
 
 	require.EqualError(t, err, `token exchange failed: Post "": unsupported protocol scheme ""`)
@@ -125,7 +124,7 @@ func TestOAuth2_Authenticate_ErrInvalidUserData(t *testing.T) {
 		},
 	}
 
-	user, err := authenticator.Authenticate(context.TODO(), "code", "", "")
+	user, err := authenticator.Authenticate(t.Context(), "code", "", "")
 	require.Error(t, err)
 
 	require.EqualError(t, err, `user data retrieval failed: Get "": unsupported protocol scheme ""`)
@@ -149,7 +148,7 @@ func TestOAuth2_Authenticate_ErrInvalidResponseCode(t *testing.T) {
 		},
 	}
 
-	user, err := authenticator.Authenticate(context.TODO(), "code", "", "")
+	user, err := authenticator.Authenticate(t.Context(), "code", "", "")
 	require.Error(t, err)
 
 	require.EqualError(t, err, "invalid response code received: 404")
@@ -173,7 +172,7 @@ func TestOAuth2_Authenticate_ErrInvalidYAML(t *testing.T) {
 		},
 	}
 
-	user, err := authenticator.Authenticate(context.TODO(), "code", "", "")
+	user, err := authenticator.Authenticate(t.Context(), "code", "", "")
 	require.Error(t, err)
 
 	require.EqualError(t, err, "yaml decode failed: EOF")

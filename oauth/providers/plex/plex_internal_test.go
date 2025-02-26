@@ -1,7 +1,6 @@
 package plex
 
 import (
-	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -43,7 +42,7 @@ func TestPlex_request(t *testing.T) {
 		Test: "value",
 	}
 
-	err := authenticator.request(context.TODO(), http.MethodGet, server.URL+tokenEndpoint, nil, &decode)
+	err := authenticator.request(t.Context(), http.MethodGet, server.URL+tokenEndpoint, nil, &decode)
 	require.NoError(t, err)
 
 	assert.Equal(t, expected, decode)
@@ -53,7 +52,7 @@ func TestPlex_request_ErrInvalidRequest(t *testing.T) {
 	t.Parallel()
 
 	authenticator := &Plex{}
-	err := authenticator.request(context.TODO(), ":", "", nil, nil)
+	err := authenticator.request(t.Context(), ":", "", nil, nil)
 	require.EqualError(t, err, `unable to create request: net/http: invalid method ":"`)
 }
 
@@ -61,7 +60,7 @@ func TestPlex_request_ErrInvalidResponse(t *testing.T) {
 	t.Parallel()
 
 	authenticator := &Plex{}
-	err := authenticator.request(context.TODO(), http.MethodGet, "", nil, nil)
+	err := authenticator.request(t.Context(), http.MethodGet, "", nil, nil)
 	require.EqualError(t, err, `invalid response received: Get "": unsupported protocol scheme ""`)
 }
 
@@ -80,7 +79,7 @@ func TestPlex_request_ErrInvalidResponseCode(t *testing.T) {
 	defer server.Close()
 
 	authenticator := &Plex{}
-	err := authenticator.request(context.TODO(), http.MethodGet, server.URL+tokenEndpoint, nil, map[string]any{})
+	err := authenticator.request(t.Context(), http.MethodGet, server.URL+tokenEndpoint, nil, map[string]any{})
 	require.EqualError(t, err, "invalid response code received: 404")
 }
 
@@ -99,6 +98,6 @@ func TestPlex_request_ErrInvalidYaml(t *testing.T) {
 	defer server.Close()
 
 	authenticator := &Plex{}
-	err := authenticator.request(context.TODO(), http.MethodGet, server.URL+tokenEndpoint, nil, map[string]any{})
+	err := authenticator.request(t.Context(), http.MethodGet, server.URL+tokenEndpoint, nil, map[string]any{})
 	require.EqualError(t, err, "yaml decode failed: EOF")
 }

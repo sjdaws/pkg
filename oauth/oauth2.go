@@ -8,23 +8,24 @@ import (
 	"github.com/sjdaws/pkg/oauth/providers/github"
 	"github.com/sjdaws/pkg/oauth/providers/google"
 	"github.com/sjdaws/pkg/oauth/providers/plex"
+	"github.com/sjdaws/pkg/oauth/providers/slack"
 )
 
-// ProviderFactory interface.
-type ProviderFactory interface {
+// Factory interface.
+type Factory interface {
 	Get(provider string, callbackURL string, clientID string, clientSecret string, options map[string]string) (providers.Authenticator, error)
 }
 
-// Factory instance for ProviderFactory.
-type Factory struct{}
+// ProviderFactory instance for Factory.
+type ProviderFactory struct{}
 
 // New create a ProviderFactory.
-func New() ProviderFactory {
-	return &Factory{}
+func New() Factory {
+	return &ProviderFactory{}
 }
 
 // Get a provider from a Factory.
-func (f *Factory) Get(provider string, callbackURL string, clientID string, clientSecret string, options map[string]string) (providers.Authenticator, error) {
+func (f *ProviderFactory) Get(provider string, callbackURL string, clientID string, clientSecret string, options map[string]string) (providers.Authenticator, error) {
 	var authenticator providers.Authenticator
 
 	switch provider {
@@ -38,6 +39,8 @@ func (f *Factory) Get(provider string, callbackURL string, clientID string, clie
 		authenticator = google.New(callbackURL, clientID, clientSecret, options)
 	case "plex":
 		authenticator = plex.New(callbackURL, clientID, clientSecret, options)
+	case "slack":
+		authenticator = slack.New(callbackURL, clientID, clientSecret, options)
 	default:
 		return nil, errors.New("unsupported authentication provider requested: %s", provider)
 	}

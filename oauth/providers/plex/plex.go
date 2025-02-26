@@ -106,7 +106,7 @@ func (a *Plex) Authorise(_ string) (*providers.Request, error) {
 		),
 	)
 
-	err := a.request(context.TODO(), http.MethodPost, a.Endpoints.CreatePinURL, data, &pin)
+	err := a.request(context.Background(), http.MethodPost, a.Endpoints.CreatePinURL, data, &pin)
 	if err != nil {
 		return nil, errors.Wrap(err, "pin creation failed")
 	}

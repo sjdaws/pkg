@@ -1,7 +1,6 @@
 package providers
 
 import (
-	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -41,7 +40,7 @@ func TestOAuth2_Authenticate_getUserData(t *testing.T) {
 		},
 	}
 
-	user, err := authenticator.getUserData(context.TODO(), &http.Client{})
+	user, err := authenticator.getUserData(t.Context(), &http.Client{})
 	require.NoError(t, err)
 
 	expected := &UserData{
@@ -71,7 +70,7 @@ func TestOAuth2_Authenticate_getUserData_ErrInvalidUserData(t *testing.T) {
 
 	authenticator := &OAuth2{}
 
-	user, err := authenticator.getUserData(context.TODO(), &http.Client{})
+	user, err := authenticator.getUserData(t.Context(), &http.Client{})
 	require.Error(t, err)
 
 	require.EqualError(t, err, `user data retrieval failed: Get "": unsupported protocol scheme ""`)
@@ -90,7 +89,7 @@ func TestOAuth2_Authenticate_getUserData_ErrInvalidResponseCode(t *testing.T) {
 		},
 	}
 
-	user, err := authenticator.getUserData(context.TODO(), &http.Client{})
+	user, err := authenticator.getUserData(t.Context(), &http.Client{})
 	require.Error(t, err)
 
 	require.EqualError(t, err, "invalid response code received: 404")
@@ -109,7 +108,7 @@ func TestOAuth2_Authenticate_getUserData_ErrInvalidYAML(t *testing.T) {
 		},
 	}
 
-	user, err := authenticator.getUserData(context.TODO(), &http.Client{})
+	user, err := authenticator.getUserData(t.Context(), &http.Client{})
 	require.Error(t, err)
 
 	require.EqualError(t, err, "yaml decode failed: EOF")

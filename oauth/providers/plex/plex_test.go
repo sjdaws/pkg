@@ -1,7 +1,6 @@
 package plex_test
 
 import (
-	"context"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -75,7 +74,7 @@ func TestPlex_Authenticate(t *testing.T) {
 		Username: "test",
 	}
 
-	user, err := authenticator.Authenticate(context.TODO(), "code", "00000000-0000-0000-0000-000000000001", "verifier")
+	user, err := authenticator.Authenticate(t.Context(), "code", "00000000-0000-0000-0000-000000000001", "verifier")
 	require.NoError(t, err)
 
 	assert.Equal(t, expected, user)
@@ -93,7 +92,7 @@ func TestPlex_Authenticate_ErrInvalidToken(t *testing.T) {
 		},
 	}
 
-	user, err := authenticator.Authenticate(context.TODO(), "", "", "")
+	user, err := authenticator.Authenticate(t.Context(), "", "", "")
 	require.EqualError(t, err, `token exchange failed: Get "": unsupported protocol scheme ""`)
 	assert.Nil(t, user)
 }
@@ -133,7 +132,7 @@ func TestPlex_Authenticate_ErrInvalidUserData(t *testing.T) {
 		},
 	}
 
-	user, err := authenticator.Authenticate(context.TODO(), "", "00000000-0000-0000-0000-000000000001", "verifier")
+	user, err := authenticator.Authenticate(t.Context(), "", "00000000-0000-0000-0000-000000000001", "verifier")
 	require.EqualError(t, err, `user data retrieval failed: Get "": unsupported protocol scheme ""`)
 	assert.Nil(t, user)
 }

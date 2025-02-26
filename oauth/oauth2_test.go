@@ -10,10 +10,12 @@ import (
 )
 
 func TestNew(t *testing.T) {
+	t.Parallel()
+
 	factory := oauth.New()
 
-	require.IsType(t, &oauth.Factory{}, factory)
-	require.Implements(t, (*oauth.ProviderFactory)(nil), factory)
+	require.IsType(t, &oauth.ProviderFactory{}, factory)
+	require.Implements(t, (*oauth.Factory)(nil), factory)
 }
 
 func TestFactory_Get(t *testing.T) {
@@ -26,6 +28,7 @@ func TestFactory_Get(t *testing.T) {
 		"github",
 		"google",
 		"plex",
+		"slack",
 	}
 
 	for _, provider := range testcases {
@@ -43,6 +46,8 @@ func TestFactory_Get(t *testing.T) {
 }
 
 func TestFactory_Get_ErrInvalidProvider(t *testing.T) {
+	t.Parallel()
+
 	factory := oauth.New()
 
 	authenticator, err := factory.Get("invalid", "", "", "", nil)

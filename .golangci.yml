@@ -1,0 +1,42 @@
+issues:
+  exclude-rules:
+    - path: _test.go
+      linters:
+        - exhaustruct
+        - funlen
+        - varnamelen
+
+linters:
+  enable-all: true
+  disable:
+    - ireturn      # testing is harder without interfaces
+    - lll          # long live the long line
+    - tenv         # deprecated
+
+linters-settings:
+  depguard:
+    rules:
+      lax:
+        deny:
+          - pkg: github.com/sjdaws/pkg/testing/connectionmock
+            desc: "you're doing this the hard way, use repositorymock instead"
+        files:
+          - $all
+        list-mode: lax
+  gci:
+    sections:
+      - standard
+      - default
+      - prefix(github.com/sjdaws/pkg)
+  ireturn:
+    allow:
+      - (ar|er|Factory|mock|or)$
+      - error
+  tagliatelle:
+    case:
+      overrides:
+        - pkg: oauth/providers/plex
+          rules:
+            json: camel
+      rules:
+        json: snake

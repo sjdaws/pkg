@@ -11,13 +11,18 @@ import (
 	"github.com/sjdaws/pkg/errors"
 )
 
-// Database interface.
-type Database interface {
+// Connection instance.
+type Connection struct {
+	orm *gorm.DB
+}
+
+// Driver interface.
+type Driver interface {
 	GetDialector() (gorm.Dialector, error)
 }
 
-// New create a new database connection.
-func New(
+// Connect create a new database connection.
+func Connect(
 	debug bool,
 	driver string,
 	host string,
@@ -27,8 +32,8 @@ func New(
 	socket string,
 	sslmode string,
 	username string,
-) (*gorm.DB, error) {
-	var options Database
+) (*Connection, error) {
+	var options Driver
 
 	switch strings.ToLower(driver) {
 	case "mariadb", "mysql":
@@ -70,12 +75,27 @@ func New(
 		return nil, errors.Wrap(err, "unable to create dialector")
 	}
 
-	connection, err := gorm.Open(dialector, createConfiguration(truthy.Cond(debug, logger.Info, logger.Warn)))
+	orm, err := gorm.Open(dialector, createConfiguration(truthy.Cond(debug, logger.Info, logger.Warn)))
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to open connection to database")
 	}
 
-	return connection, nil
+	return &Connection{orm: orm}, nil
+}
+
+// Migrate run database migrations.
+func (c *Connection) Migrate(model ...any) error {
+	// Force InnoDB for MySQL-like DBs
+	if c.orm.Dialector.Name() == "mysql" {
+		c.orm.Set("gorm:table_options", "ENGINE=InnoDB")
+	}
+
+	err := c.orm.AutoMigrate(model...)
+	if err != nil {
+		return errors.Wrap(err, "unable to invoke database migrations")
+	}
+
+	return nil
 }
 
 // createConfiguration creates a configuration for a dialector.
