@@ -6,6 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/sjdaws/pkg/database"
 	"github.com/sjdaws/pkg/testing/database/modelmock"
@@ -92,4 +93,16 @@ func TestRepository(t *testing.T) {
 	instance := database.Repository[modelmock.ModelMock](connection)
 
 	assert.Implements(t, (*database.Persister[modelmock.ModelMock])(nil), instance)
+}
+
+func TestTransaction(t *testing.T) {
+	t.Parallel()
+
+	connection, err := database.Connect(false, "sqlite", "", ":memory:", "", 0, "", "", "")
+	require.NoError(t, err)
+
+	transaction := connection.Transaction()
+
+	assert.NotEqual(t, connection, transaction)
+	assert.IsType(t, &gorm.DB{}, transaction)
 }

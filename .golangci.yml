@@ -5,6 +5,9 @@ issues:
         - exhaustruct
         - funlen
         - varnamelen
+    - path: database/repository.go
+      linters:
+        - interfacebloat
 
 linters:
   enable-all: true

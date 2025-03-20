@@ -325,6 +325,24 @@ func TestRepository_OrderBy(t *testing.T) {
 	assert.Equal(t, []Order{{Column: "id", Descending: true}}, actual.order)
 }
 
+func TestRepository_PartOf(t *testing.T) {
+	t.Parallel()
+
+	connection, _ := connectionmock.New(t)
+	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
+
+	transaction, _ := connectionmock.New(t)
+
+	result := instance.PartOf(transaction)
+
+	assert.NotEqual(t, instance, result)
+
+	actual, ok := result.(repository[modelmock.ModelMock])
+
+	require.True(t, ok)
+	assert.Equal(t, actual.connection, transaction)
+}
+
 func TestRepository_Restore(t *testing.T) {
 	t.Parallel()
 

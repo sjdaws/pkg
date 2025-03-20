@@ -5,12 +5,21 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/gorm"
 
 	"github.com/sjdaws/pkg/database"
 	"github.com/sjdaws/pkg/errors"
 	"github.com/sjdaws/pkg/testing/database/modelmock"
 	"github.com/sjdaws/pkg/testing/database/repositorymock"
 )
+
+func TestRepositoryMock(t *testing.T) {
+	t.Parallel()
+
+	repository := repositorymock.RepositoryMock[modelmock.ModelMock]{}
+
+	assert.Implements(t, (*database.Persister[modelmock.ModelMock])(nil), &repository)
+}
 
 func TestRepositoryMock_Also(t *testing.T) {
 	t.Parallel()
@@ -113,6 +122,16 @@ func TestRepositoryMock_Order(t *testing.T) {
 	repository := repositorymock.RepositoryMock[modelmock.ModelMock]{}
 
 	result := repository.OrderBy(database.Order{Column: "test", Descending: true})
+
+	assert.Equal(t, repository, result)
+}
+
+func TestRepositoryMock_PartOf(t *testing.T) {
+	t.Parallel()
+
+	repository := repositorymock.RepositoryMock[modelmock.ModelMock]{}
+
+	result := repository.PartOf(&gorm.DB{})
 
 	assert.Equal(t, repository, result)
 }

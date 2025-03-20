@@ -98,6 +98,11 @@ func (c *Connection) Migrate(model ...any) error {
 	return nil
 }
 
+// Transaction start a transaction and return transactional connection.
+func (c *Connection) Transaction() *gorm.DB {
+	return c.orm.Begin()
+}
+
 // createConfiguration creates a configuration for a dialector.
 func createConfiguration(logMode logger.LogLevel) *gorm.Config {
 	return &gorm.Config{

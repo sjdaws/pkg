@@ -1,6 +1,8 @@
 package repositorymock
 
 import (
+	"gorm.io/gorm"
+
 	"github.com/sjdaws/pkg/database"
 )
 
@@ -51,6 +53,11 @@ func (r RepositoryMock[m]) One(where ...any) (*m, error) {
 
 // OrderBy run OrderByMock() function.
 func (r RepositoryMock[m]) OrderBy(_ ...database.Order) database.Persister[m] {
+	return r
+}
+
+// PartOf do nothing.
+func (r RepositoryMock[m]) PartOf(_ *gorm.DB) database.Persister[m] {
 	return r
 }
 

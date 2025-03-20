@@ -17,6 +17,7 @@ type Persister[m Model] interface {
 	Get(where ...any) ([]m, error)
 	One(where ...any) (*m, error)
 	OrderBy(order ...Order) Persister[m]
+	PartOf(connection *gorm.DB) Persister[m]
 	Restore(model *m) error
 	Update(model *m) error
 }
@@ -140,6 +141,14 @@ func (r repository[m]) OrderBy(order ...Order) Persister[m] {
 	transaction := r
 	transaction.order = r.order
 	transaction.order = append(transaction.order, order...)
+
+	return transaction
+}
+
+// PartOf define a different connection for transactions.
+func (r repository[m]) PartOf(connection *gorm.DB) Persister[m] {
+	transaction := r
+	transaction.connection = connection
 
 	return transaction
 }
