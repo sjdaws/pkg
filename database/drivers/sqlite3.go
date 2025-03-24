@@ -1,6 +1,9 @@
 package drivers
 
 import (
+	"strings"
+
+	"github.com/carlmjohnson/truthy"
 	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 
@@ -19,9 +22,11 @@ func (d SQLite3) GetDialector() (gorm.Dialector, error) {
 		return nil, errors.New(ErrInvalidDatabase)
 	}
 
+	filename := truthy.Cond(strings.Contains(d.Filename, "?"), d.Filename+"&_pragma=foreign_keys(1)", d.Filename+"?_pragma=foreign_keys(1)")
+
 	return sqlite.Dialector{
 		DriverName: "",
-		DSN:        d.Filename + "?_pragma=foreign_keys(1)",
+		DSN:        filename,
 		Conn:       nil,
 	}, nil
 }

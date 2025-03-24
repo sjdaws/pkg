@@ -1,7 +1,6 @@
 package database_test
 
 import (
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -71,17 +70,8 @@ func TestConnect_ErrOpenDatabaseFailure(t *testing.T) {
 func TestNew_ErrMigrationFailure(t *testing.T) {
 	t.Parallel()
 
-	// Create read-only database to fail migrations
-	filename := t.TempDir() + "/test.db"
-
-	_, err := os.Create(filename)
-	require.NoError(t, err)
-
-	err = os.Chmod(filename, 0o444)
-	require.NoError(t, err)
-
-	// Using the current process as a database will fail migrations
-	connection, err := database.Connect(false, "sqlite", "", filename, "", 0, "", "", "")
+	// Enforce read only database
+	connection, err := database.Connect(false, "sqlite", "", ":memory:?_pragma=query_only(true)", "", 0, "", "", "")
 	require.NoError(t, err)
 
 	err = connection.Migrate(modelmock.ModelMock{})
