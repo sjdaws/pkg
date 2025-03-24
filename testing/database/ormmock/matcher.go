@@ -1,4 +1,4 @@
-package connectionmock
+package ormmock
 
 import (
 	"database/sql/driver"

@@ -70,18 +70,23 @@ func TestConnect_ErrOpenDatabaseFailure(t *testing.T) {
 func TestNew_ErrMigrationFailure(t *testing.T) {
 	t.Parallel()
 
-	// Get currently running process
-	exe, err := os.Executable()
+	// Create read-only database to fail migrations
+	filename := t.TempDir() + "/test.db"
+
+	_, err := os.Create(filename)
+	require.NoError(t, err)
+
+	err = os.Chmod(filename, 0o444)
 	require.NoError(t, err)
 
 	// Using the current process as a database will fail migrations
-	connection, err := database.Connect(false, "sqlite", "", exe, "", 0, "", "", "")
+	connection, err := database.Connect(false, "sqlite", "", filename, "", 0, "", "", "")
 	require.NoError(t, err)
 
 	err = connection.Migrate(modelmock.ModelMock{})
 	require.Error(t, err)
 
-	require.EqualError(t, err, "unable to invoke database migrations: file is not a database (26)")
+	require.EqualError(t, err, "unable to invoke database migrations: attempt to write a readonly database (8)")
 }
 
 func TestRepository(t *testing.T) {

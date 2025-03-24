@@ -9,8 +9,8 @@ import (
 	"gorm.io/gorm/clause"
 
 	"github.com/sjdaws/pkg/errors"
-	"github.com/sjdaws/pkg/testing/database/connectionmock"
 	"github.com/sjdaws/pkg/testing/database/modelmock"
+	"github.com/sjdaws/pkg/testing/database/ormmock"
 )
 
 const (
@@ -24,7 +24,7 @@ const (
 func TestRepository_Also(t *testing.T) {
 	t.Parallel()
 
-	connection, _ := connectionmock.New(t)
+	connection, _ := ormmock.New(t)
 	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
 
 	result := instance.Also("Relation")
@@ -40,7 +40,7 @@ func TestRepository_Also(t *testing.T) {
 func TestRepository_And(t *testing.T) {
 	t.Parallel()
 
-	connection, _ := connectionmock.New(t)
+	connection, _ := ormmock.New(t)
 	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
 
 	result := instance.And("Relation")
@@ -56,7 +56,7 @@ func TestRepository_And(t *testing.T) {
 func TestRepository_BypassDelete(t *testing.T) {
 	t.Parallel()
 
-	connection, _ := connectionmock.New(t)
+	connection, _ := ormmock.New(t)
 	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
 
 	result := instance.BypassDelete()
@@ -72,14 +72,14 @@ func TestRepository_BypassDelete(t *testing.T) {
 func TestRepository_Create(t *testing.T) {
 	t.Parallel()
 
-	connection, mock := connectionmock.New(t)
+	connection, mock := ormmock.New(t)
 	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
 
 	model := &modelmock.ModelMock{Test: true}
 
-	connectionmock.MockExec(
+	ormmock.MockExec(
 		mock,
-		connectionmock.Exec{
+		ormmock.Exec{
 			Query:     insertQuery,
 			QueryArgs: []driver.Value{nil, true},
 		},
@@ -94,14 +94,14 @@ func TestRepository_Create(t *testing.T) {
 func TestRepository_Create_ExecError(t *testing.T) {
 	t.Parallel()
 
-	connection, mock := connectionmock.New(t)
+	connection, mock := ormmock.New(t)
 	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
 
 	model := &modelmock.ModelMock{Test: true}
 
-	connectionmock.MockExec(
+	ormmock.MockExec(
 		mock,
-		connectionmock.Exec{
+		ormmock.Exec{
 			Error:     errors.New("test"),
 			Query:     insertQuery,
 			QueryArgs: []driver.Value{nil, true},
@@ -117,23 +117,23 @@ func TestRepository_Create_ExecError(t *testing.T) {
 func TestRepository_Delete(t *testing.T) {
 	t.Parallel()
 
-	connection, mock := connectionmock.New(t)
+	connection, mock := ormmock.New(t)
 	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
 
 	model := &modelmock.ModelMock{Test: true}
 
-	connectionmock.MockExec(
+	ormmock.MockExec(
 		mock,
-		connectionmock.Exec{
+		ormmock.Exec{
 			Query:     insertQuery,
 			QueryArgs: []driver.Value{nil, true},
 		},
 	)
-	connectionmock.MockExec(
+	ormmock.MockExec(
 		mock,
-		connectionmock.Exec{
+		ormmock.Exec{
 			Query:     deleteQuery,
-			QueryArgs: []driver.Value{connectionmock.TimeArg{}, 1},
+			QueryArgs: []driver.Value{ormmock.TimeArg{}, 1},
 		},
 	)
 
@@ -149,24 +149,24 @@ func TestRepository_Delete(t *testing.T) {
 func TestRepository_Delete_ExecError(t *testing.T) {
 	t.Parallel()
 
-	connection, mock := connectionmock.New(t)
+	connection, mock := ormmock.New(t)
 	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
 
 	model := &modelmock.ModelMock{Test: true}
 
-	connectionmock.MockExec(
+	ormmock.MockExec(
 		mock,
-		connectionmock.Exec{
+		ormmock.Exec{
 			Query:     insertQuery,
 			QueryArgs: []driver.Value{nil, true},
 		},
 	)
-	connectionmock.MockExec(
+	ormmock.MockExec(
 		mock,
-		connectionmock.Exec{
+		ormmock.Exec{
 			Error:     errors.New("test"),
 			Query:     deleteQuery,
-			QueryArgs: []driver.Value{connectionmock.TimeArg{}, 1},
+			QueryArgs: []driver.Value{ormmock.TimeArg{}, 1},
 		},
 	)
 
@@ -182,12 +182,12 @@ func TestRepository_Delete_ExecError(t *testing.T) {
 func TestRepository_Get(t *testing.T) {
 	t.Parallel()
 
-	connection, mock := connectionmock.New(t)
+	connection, mock := ormmock.New(t)
 	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
 
-	connectionmock.MockSelect(
+	ormmock.MockSelect(
 		mock,
-		connectionmock.Select{
+		ormmock.Select{
 			Query:     selectQuery,
 			QueryArgs: []driver.Value{1, true},
 			Rows:      mock.NewRows([]string{"id"}).AddRow(1),
@@ -203,12 +203,12 @@ func TestRepository_Get(t *testing.T) {
 func TestRepository_Get_NoResultsError(t *testing.T) {
 	t.Parallel()
 
-	connection, mock := connectionmock.New(t)
+	connection, mock := ormmock.New(t)
 	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
 
-	connectionmock.MockSelect(
+	ormmock.MockSelect(
 		mock,
-		connectionmock.Select{
+		ormmock.Select{
 			Query:     selectQuery,
 			QueryArgs: []driver.Value{1, true},
 		},
@@ -225,12 +225,12 @@ func TestRepository_Get_NoResultsError(t *testing.T) {
 func TestRepository_Get_QueryError(t *testing.T) {
 	t.Parallel()
 
-	connection, mock := connectionmock.New(t)
+	connection, mock := ormmock.New(t)
 	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
 
-	connectionmock.MockSelect(
+	ormmock.MockSelect(
 		mock,
-		connectionmock.Select{
+		ormmock.Select{
 			Error:     errors.New("test"),
 			Query:     selectQuery,
 			QueryArgs: []driver.Value{1, true},
@@ -247,12 +247,12 @@ func TestRepository_Get_QueryError(t *testing.T) {
 func TestRepository_One(t *testing.T) {
 	t.Parallel()
 
-	connection, mock := connectionmock.New(t)
+	connection, mock := ormmock.New(t)
 	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
 
-	connectionmock.MockSelect(
+	ormmock.MockSelect(
 		mock,
-		connectionmock.Select{
+		ormmock.Select{
 			Query:     selectQuery,
 			QueryArgs: []driver.Value{1, true, 1},
 			Rows:      mock.NewRows([]string{"id"}).AddRow(1),
@@ -268,12 +268,12 @@ func TestRepository_One(t *testing.T) {
 func TestRepository_One_NoResultsError(t *testing.T) {
 	t.Parallel()
 
-	connection, mock := connectionmock.New(t)
+	connection, mock := ormmock.New(t)
 	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
 
-	connectionmock.MockSelect(
+	ormmock.MockSelect(
 		mock,
-		connectionmock.Select{
+		ormmock.Select{
 			Query:     selectQuery,
 			QueryArgs: []driver.Value{1, true, 1},
 		},
@@ -290,12 +290,12 @@ func TestRepository_One_NoResultsError(t *testing.T) {
 func TestRepository_One_QueryError(t *testing.T) {
 	t.Parallel()
 
-	connection, mock := connectionmock.New(t)
+	connection, mock := ormmock.New(t)
 	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
 
-	connectionmock.MockSelect(
+	ormmock.MockSelect(
 		mock,
-		connectionmock.Select{
+		ormmock.Select{
 			Error:     errors.New("test"),
 			Query:     selectQuery,
 			QueryArgs: []driver.Value{1, true, 1},
@@ -312,7 +312,7 @@ func TestRepository_One_QueryError(t *testing.T) {
 func TestRepository_OrderBy(t *testing.T) {
 	t.Parallel()
 
-	connection, _ := connectionmock.New(t)
+	connection, _ := ormmock.New(t)
 	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
 
 	result := instance.OrderBy(Order{Column: "id", Descending: true})
@@ -328,10 +328,10 @@ func TestRepository_OrderBy(t *testing.T) {
 func TestRepository_PartOf(t *testing.T) {
 	t.Parallel()
 
-	connection, _ := connectionmock.New(t)
+	connection, _ := ormmock.New(t)
 	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
 
-	transaction, _ := connectionmock.New(t)
+	transaction, _ := ormmock.New(t)
 
 	result := instance.PartOf(transaction)
 
@@ -346,28 +346,28 @@ func TestRepository_PartOf(t *testing.T) {
 func TestRepository_Restore(t *testing.T) {
 	t.Parallel()
 
-	connection, mock := connectionmock.New(t)
+	connection, mock := ormmock.New(t)
 	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
 
 	model := &modelmock.ModelMock{Test: true}
 
-	connectionmock.MockExec(
+	ormmock.MockExec(
 		mock,
-		connectionmock.Exec{
+		ormmock.Exec{
 			Query:     insertQuery,
 			QueryArgs: []driver.Value{nil, true},
 		},
 	)
-	connectionmock.MockExec(
+	ormmock.MockExec(
 		mock,
-		connectionmock.Exec{
+		ormmock.Exec{
 			Query:     deleteQuery,
-			QueryArgs: []driver.Value{connectionmock.TimeArg{}, 1},
+			QueryArgs: []driver.Value{ormmock.TimeArg{}, 1},
 		},
 	)
-	connectionmock.MockExec(
+	ormmock.MockExec(
 		mock,
-		connectionmock.Exec{
+		ormmock.Exec{
 			Query:     restoreQuery,
 			QueryArgs: []driver.Value{nil, 1},
 		},
@@ -388,28 +388,28 @@ func TestRepository_Restore(t *testing.T) {
 func TestRepository_Restore_ExecError(t *testing.T) {
 	t.Parallel()
 
-	connection, mock := connectionmock.New(t)
+	connection, mock := ormmock.New(t)
 	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
 
 	model := &modelmock.ModelMock{Test: true}
 
-	connectionmock.MockExec(
+	ormmock.MockExec(
 		mock,
-		connectionmock.Exec{
+		ormmock.Exec{
 			Query:     insertQuery,
 			QueryArgs: []driver.Value{nil, true},
 		},
 	)
-	connectionmock.MockExec(
+	ormmock.MockExec(
 		mock,
-		connectionmock.Exec{
+		ormmock.Exec{
 			Query:     deleteQuery,
-			QueryArgs: []driver.Value{connectionmock.TimeArg{}, 1},
+			QueryArgs: []driver.Value{ormmock.TimeArg{}, 1},
 		},
 	)
-	connectionmock.MockExec(
+	ormmock.MockExec(
 		mock,
-		connectionmock.Exec{
+		ormmock.Exec{
 			Error:     errors.New("test"),
 			Query:     restoreQuery,
 			QueryArgs: []driver.Value{nil, 1},
@@ -431,14 +431,14 @@ func TestRepository_Restore_ExecError(t *testing.T) {
 func TestRepository_Update(t *testing.T) {
 	t.Parallel()
 
-	connection, mock := connectionmock.New(t)
+	connection, mock := ormmock.New(t)
 	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
 
 	model := &modelmock.ModelMock{Test: true}
 
-	connectionmock.MockExec(
+	ormmock.MockExec(
 		mock,
-		connectionmock.Exec{
+		ormmock.Exec{
 			Query:     insertQuery,
 			QueryArgs: []driver.Value{nil, true},
 		},
@@ -453,15 +453,15 @@ func TestRepository_Update(t *testing.T) {
 func TestRepository_Update_ExecError(t *testing.T) {
 	t.Parallel()
 
-	connection, mock := connectionmock.New(t)
+	connection, mock := ormmock.New(t)
 	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
 
 	model := &modelmock.ModelMock{Test: true}
 
 	// model must be updated twice: initial update will create/hydrate the model, second update will perform update
-	connectionmock.MockExec(
+	ormmock.MockExec(
 		mock,
-		connectionmock.Exec{
+		ormmock.Exec{
 			Query:     insertQuery,
 			QueryArgs: []driver.Value{nil, true},
 		},
@@ -474,9 +474,9 @@ func TestRepository_Update_ExecError(t *testing.T) {
 
 	model.Test = false
 
-	connectionmock.MockExec(
+	ormmock.MockExec(
 		mock,
-		connectionmock.Exec{
+		ormmock.Exec{
 			Error:     errors.New("test"),
 			Query:     updateQuery,
 			QueryArgs: []driver.Value{nil, false, model.ID},
@@ -574,14 +574,14 @@ func TestRepository_query(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
-			connection, mock := connectionmock.New(t)
+			connection, mock := ormmock.New(t)
 			repo := repository[modelmock.ModelMock]{
 				connection: connection,
 			}
 
-			connectionmock.MockSelect(
+			ormmock.MockSelect(
 				mock,
-				connectionmock.Select{
+				ormmock.Select{
 					Query:     testcase.expectedQuery,
 					QueryArgs: testcase.expectedParameters,
 					Rows:      mock.NewRows([]string{"id"}).AddRow("00000000-0000-0000-0000-000000000001"),
