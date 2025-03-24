@@ -9,21 +9,11 @@ import (
 // RepositoryMock fakes a repository.
 type RepositoryMock[m database.Model] struct {
 	CreateMock  func(model *m) error
-	DeleteMock  func(model *m) error
+	DeleteMock  func(model *m, where ...any) error
 	GetMock     func(where ...any) ([]m, error)
 	OneMock     func(where ...any) (*m, error)
 	RestoreMock func(model *m) error
 	UpdateMock  func(model *m) error
-}
-
-// Also do nothing.
-func (r RepositoryMock[m]) Also(_ string, _ ...any) database.Persister[m] {
-	return r
-}
-
-// And do nothing.
-func (r RepositoryMock[m]) And(_ string, _ ...any) database.Persister[m] {
-	return r
 }
 
 // BypassDelete do nothing.
@@ -37,8 +27,8 @@ func (r RepositoryMock[m]) Create(model *m) error {
 }
 
 // Delete run DeleteMock() function.
-func (r RepositoryMock[m]) Delete(model *m) error {
-	return r.DeleteMock(model)
+func (r RepositoryMock[m]) Delete(model *m, where ...any) error {
+	return r.DeleteMock(model, where...)
 }
 
 // Get run GetMock() function.
@@ -66,7 +56,17 @@ func (r RepositoryMock[m]) Restore(model *m) error {
 	return r.RestoreMock(model)
 }
 
+// Then do nothing.
+func (r RepositoryMock[m]) Then(_ string, _ ...any) database.Persister[m] {
+	return r
+}
+
 // Update run UpdateMock() function.
 func (r RepositoryMock[m]) Update(model *m) error {
 	return r.UpdateMock(model)
+}
+
+// With do nothing.
+func (r RepositoryMock[m]) With(_ string, _ ...any) database.Persister[m] {
+	return r
 }

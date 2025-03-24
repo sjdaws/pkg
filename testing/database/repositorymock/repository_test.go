@@ -21,26 +21,6 @@ func TestRepositoryMock(t *testing.T) {
 	assert.Implements(t, (*database.Persister[modelmock.ModelMock])(nil), &repository)
 }
 
-func TestRepositoryMock_Also(t *testing.T) {
-	t.Parallel()
-
-	repository := repositorymock.RepositoryMock[modelmock.ModelMock]{}
-
-	result := repository.Also("")
-
-	assert.Equal(t, repository, result)
-}
-
-func TestRepositoryMock_And(t *testing.T) {
-	t.Parallel()
-
-	repository := repositorymock.RepositoryMock[modelmock.ModelMock]{}
-
-	result := repository.And("")
-
-	assert.Equal(t, repository, result)
-}
-
 func TestRepositoryMock_BypassDelete(t *testing.T) {
 	t.Parallel()
 
@@ -71,7 +51,7 @@ func TestRepositoryMock_Delete(t *testing.T) {
 	t.Parallel()
 
 	repository := repositorymock.RepositoryMock[modelmock.ModelMock]{
-		DeleteMock: func(_ *modelmock.ModelMock) error {
+		DeleteMock: func(_ *modelmock.ModelMock, _ ...any) error {
 			return errors.New("delete")
 		},
 	}
@@ -151,6 +131,16 @@ func TestRepositoryMock_Restore(t *testing.T) {
 	require.EqualError(t, err, "restore")
 }
 
+func TestRepositoryMock_Then(t *testing.T) {
+	t.Parallel()
+
+	repository := repositorymock.RepositoryMock[modelmock.ModelMock]{}
+
+	result := repository.Then("")
+
+	assert.Equal(t, repository, result)
+}
+
 func TestRepositoryMock_Update(t *testing.T) {
 	t.Parallel()
 
@@ -165,4 +155,14 @@ func TestRepositoryMock_Update(t *testing.T) {
 	require.Error(t, err)
 
 	require.EqualError(t, err, "update")
+}
+
+func TestRepositoryMock_With(t *testing.T) {
+	t.Parallel()
+
+	repository := repositorymock.RepositoryMock[modelmock.ModelMock]{}
+
+	result := repository.With("")
+
+	assert.Equal(t, repository, result)
 }

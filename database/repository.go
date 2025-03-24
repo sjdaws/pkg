@@ -9,18 +9,21 @@ import (
 
 // Persister interface.
 type Persister[m Model] interface {
-	Also(relationship string, where ...any) Persister[m]
-	And(relationship string, where ...any) Persister[m]
 	BypassDelete() Persister[m]
 	Create(model *m) error
-	Delete(model *m) error
+	Delete(model *m, where ...any) error
 	Get(where ...any) ([]m, error)
 	One(where ...any) (*m, error)
 	OrderBy(order ...Order) Persister[m]
 	PartOf(connection *gorm.DB) Persister[m]
 	Restore(model *m) error
+	Then(relationship string, where ...any) Persister[m]
 	Update(model *m) error
+	With(relationship string, where ...any) Persister[m]
 }
+
+// Or type for holding where queries which should be OR.
+type Or []any
 
 // Order parameter for Persister.OrderBy.
 type Order struct {
@@ -68,24 +71,6 @@ func Repository[m Model](connection Connection) Persister[m] {
 	return instance
 }
 
-// Also eager load relationship after initial query is complete.
-func (r repository[m]) Also(relationship string, where ...any) Persister[m] {
-	transaction := r
-	transaction.relations = r.relations
-	transaction.relations = append(transaction.relations, relation{join: false, key: relationship, where: where})
-
-	return transaction
-}
-
-// And get a relationship with query, otherwise return nothing.
-func (r repository[m]) And(relationship string, where ...any) Persister[m] {
-	transaction := r
-	transaction.relations = r.relations
-	transaction.relations = append(transaction.relations, relation{join: true, key: relationship, where: where})
-
-	return transaction
-}
-
 // BypassDelete return deleted records.
 func (r repository[m]) BypassDelete() Persister[m] {
 	transaction := r
@@ -105,8 +90,8 @@ func (r repository[m]) Create(model *m) error {
 }
 
 // Delete a record.
-func (r repository[m]) Delete(model *m) error {
-	result := r.connection.Delete(model)
+func (r repository[m]) Delete(model *m, where ...any) error {
+	result := r.connection.Delete(model, where...)
 	if result.Error != nil {
 		return errors.Wrap(result.Error, "unable to delete record")
 	}
@@ -169,6 +154,15 @@ func (r repository[m]) Restore(model *m) error {
 	return nil
 }
 
+// Then eager load relationship after initial query is complete.
+func (r repository[m]) Then(relationship string, where ...any) Persister[m] {
+	transaction := r
+	transaction.relations = r.relations
+	transaction.relations = append(transaction.relations, relation{join: false, key: relationship, where: where})
+
+	return transaction
+}
+
 // Update a record from a model.
 func (r repository[m]) Update(model *m) error {
 	result := r.connection.Save(model)
@@ -177,6 +171,15 @@ func (r repository[m]) Update(model *m) error {
 	}
 
 	return nil
+}
+
+// With get a relationship with query, otherwise return nothing.
+func (r repository[m]) With(relationship string, where ...any) Persister[m] {
+	transaction := r
+	transaction.relations = r.relations
+	transaction.relations = append(transaction.relations, relation{join: true, key: relationship, where: where})
+
+	return transaction
 }
 
 // addMeta eager load requested relationships, process order.
@@ -195,6 +198,7 @@ func (r repository[m]) addMeta(transaction *gorm.DB) *gorm.DB {
 			transaction = transaction.InnerJoins(relationship.key, relationship.where...)
 
 			continue
+
 		}
 
 		// Preload hasmany relationships, this will do a second select for the relationship
@@ -209,7 +213,18 @@ func (r repository[m]) query(where ...any) *gorm.DB {
 	query := r.connection
 
 	for _, condition := range where {
-		query = query.Where(condition)
+		switch state := condition.(type) {
+		case Or:
+			subQuery := r.connection
+			for _, orCondition := range state {
+				subQuery = subQuery.Or(orCondition)
+			}
+
+			query = query.Where(subQuery)
+
+		default:
+			query = query.Where(condition)
+		}
 	}
 
 	return r.addMeta(query)

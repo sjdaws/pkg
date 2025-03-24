@@ -21,38 +21,6 @@ const (
 	updateQuery  = "UPDATE `model_mocks` SET `deleted_at`=?,`test`=? WHERE `model_mocks`.`deleted_at` IS NULL AND `id` = ?"
 )
 
-func TestRepository_Also(t *testing.T) {
-	t.Parallel()
-
-	connection, _ := ormmock.New(t)
-	instance := Repository[modelmock.ModelMock](&Database{orm: connection})
-
-	result := instance.Also("Relation")
-
-	assert.NotEqual(t, instance, result)
-
-	actual, ok := result.(repository[modelmock.ModelMock])
-
-	require.True(t, ok)
-	assert.Equal(t, []relation{{join: false, key: "Relation"}}, actual.relations)
-}
-
-func TestRepository_And(t *testing.T) {
-	t.Parallel()
-
-	connection, _ := ormmock.New(t)
-	instance := Repository[modelmock.ModelMock](&Database{orm: connection})
-
-	result := instance.And("Relation")
-
-	assert.NotEqual(t, instance, result)
-
-	actual, ok := result.(repository[modelmock.ModelMock])
-
-	require.True(t, ok)
-	assert.Equal(t, []relation{{join: true, key: "Relation"}}, actual.relations)
-}
-
 func TestRepository_BypassDelete(t *testing.T) {
 	t.Parallel()
 
@@ -428,6 +396,22 @@ func TestRepository_Restore_ExecError(t *testing.T) {
 	require.EqualError(t, err, "unable to restore record: test")
 }
 
+func TestRepository_Then(t *testing.T) {
+	t.Parallel()
+
+	connection, _ := ormmock.New(t)
+	instance := Repository[modelmock.ModelMock](&Database{orm: connection})
+
+	result := instance.Then("Relation")
+
+	assert.NotEqual(t, instance, result)
+
+	actual, ok := result.(repository[modelmock.ModelMock])
+
+	require.True(t, ok)
+	assert.Equal(t, []relation{{join: false, key: "Relation"}}, actual.relations)
+}
+
 func TestRepository_Update(t *testing.T) {
 	t.Parallel()
 
@@ -487,6 +471,22 @@ func TestRepository_Update_ExecError(t *testing.T) {
 	require.Error(t, err)
 
 	require.EqualError(t, err, "unable to update record: test")
+}
+
+func TestRepository_With(t *testing.T) {
+	t.Parallel()
+
+	connection, _ := ormmock.New(t)
+	instance := Repository[modelmock.ModelMock](&Database{orm: connection})
+
+	result := instance.With("Relation")
+
+	assert.NotEqual(t, instance, result)
+
+	actual, ok := result.(repository[modelmock.ModelMock])
+
+	require.True(t, ok)
+	assert.Equal(t, []relation{{join: true, key: "Relation"}}, actual.relations)
 }
 
 func TestRepository_addMeta(t *testing.T) {
@@ -556,20 +556,27 @@ func TestRepository_query(t *testing.T) {
 	testcases := map[string]struct {
 		expectedParameters []driver.Value
 		expectedQuery      string
-		parameterWhere     *modelmock.ModelMock
-		repositoryWhere    *modelmock.ModelMock
+		where              []any
 	}{
+		"both": {
+			expectedParameters: []driver.Value{3, true, 4},
+			expectedQuery:      "SELECT * FROM `model_mocks` WHERE `model_mocks`.`id.` = ? AND (`model_mocks`.`test` = ? OR `model_mocks`.`id` = ?) AND `model_mocks`.`deleted_at` IS NULL",
+			where:              []any{&modelmock.ModelMock{ID: 3}, Or{&modelmock.ModelMock{Test: true}, &modelmock.ModelMock{ID: 4}}},
+		},
+		"or": {
+			expectedParameters: []driver.Value{true, 4},
+			expectedQuery:      "SELECT * FROM `model_mocks` WHERE (`model_mocks`.`test` = ? OR `model_mocks`.`id` = ?) AND `model_mocks`.`deleted_at` IS NULL",
+			where:              []any{Or{&modelmock.ModelMock{Test: true}, &modelmock.ModelMock{ID: 4}}},
+		},
 		"where": {
 			expectedParameters: []driver.Value{true},
 			expectedQuery:      "SELECT * FROM `model_mocks` WHERE `model_mocks`.`test` = ? AND `model_mocks`.`deleted_at` IS NULL",
-			parameterWhere:     &modelmock.ModelMock{Test: true},
-			repositoryWhere:    nil,
+			where:              []any{&modelmock.ModelMock{Test: true}},
 		},
-		"no where": {
+		"nothing": {
 			expectedParameters: []driver.Value{},
 			expectedQuery:      "SELECT * FROM `model_mocks` WHERE `model_mocks`.`deleted_at` IS NULL",
-			parameterWhere:     nil,
-			repositoryWhere:    nil,
+			where:              []any{nil},
 		},
 	}
 
@@ -591,7 +598,7 @@ func TestRepository_query(t *testing.T) {
 				},
 			)
 
-			transaction := repo.query(testcase.parameterWhere)
+			transaction := repo.query(testcase.where...)
 			_ = transaction.Find(&modelmock.ModelMock{})
 		})
 	}
