@@ -14,7 +14,7 @@ func TestMigrate(t *testing.T) {
 	t.Parallel()
 
 	orm, mock := ormmock.New(t)
-	connection := &Connection{orm: orm}
+	connection := &Database{orm: orm}
 
 	query := "SELECT SCHEMA_NAME from Information_schema.SCHEMATA where SCHEMA_NAME LIKE ? ORDER BY SCHEMA_NAME=? DESC,SCHEMA_NAME limit 1"
 	queryArgs := []driver.Value{"%", ""}

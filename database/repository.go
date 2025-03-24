@@ -49,17 +49,23 @@ type relation struct {
 var ErrNoResults = errors.New("no results returned for query")
 
 // Repository create a repository for a model.
-func Repository[m Model](connection *Connection) Persister[m] {
+func Repository[m Model](connection Connection) Persister[m] {
 	var model m
 
-	return repository[m]{
-		connection: connection.orm,
+	instance := repository[m]{
+		connection: nil,
 		model:      model,
 		models:     make([]m, 0),
 		order:      make([]Order, 0),
 		relations:  make([]relation, 0),
 		unscoped:   false,
 	}
+
+	if database, ok := connection.(*Database); ok {
+		instance.connection = database.orm
+	}
+
+	return instance
 }
 
 // Also eager load relationship after initial query is complete.

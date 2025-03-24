@@ -25,7 +25,7 @@ func TestRepository_Also(t *testing.T) {
 	t.Parallel()
 
 	connection, _ := ormmock.New(t)
-	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
+	instance := Repository[modelmock.ModelMock](&Database{orm: connection})
 
 	result := instance.Also("Relation")
 
@@ -41,7 +41,7 @@ func TestRepository_And(t *testing.T) {
 	t.Parallel()
 
 	connection, _ := ormmock.New(t)
-	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
+	instance := Repository[modelmock.ModelMock](&Database{orm: connection})
 
 	result := instance.And("Relation")
 
@@ -57,7 +57,7 @@ func TestRepository_BypassDelete(t *testing.T) {
 	t.Parallel()
 
 	connection, _ := ormmock.New(t)
-	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
+	instance := Repository[modelmock.ModelMock](&Database{orm: connection})
 
 	result := instance.BypassDelete()
 
@@ -73,7 +73,7 @@ func TestRepository_Create(t *testing.T) {
 	t.Parallel()
 
 	connection, mock := ormmock.New(t)
-	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
+	instance := Repository[modelmock.ModelMock](&Database{orm: connection})
 
 	model := &modelmock.ModelMock{Test: true}
 
@@ -95,7 +95,7 @@ func TestRepository_Create_ExecError(t *testing.T) {
 	t.Parallel()
 
 	connection, mock := ormmock.New(t)
-	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
+	instance := Repository[modelmock.ModelMock](&Database{orm: connection})
 
 	model := &modelmock.ModelMock{Test: true}
 
@@ -118,7 +118,7 @@ func TestRepository_Delete(t *testing.T) {
 	t.Parallel()
 
 	connection, mock := ormmock.New(t)
-	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
+	instance := Repository[modelmock.ModelMock](&Database{orm: connection})
 
 	model := &modelmock.ModelMock{Test: true}
 
@@ -150,7 +150,7 @@ func TestRepository_Delete_ExecError(t *testing.T) {
 	t.Parallel()
 
 	connection, mock := ormmock.New(t)
-	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
+	instance := Repository[modelmock.ModelMock](&Database{orm: connection})
 
 	model := &modelmock.ModelMock{Test: true}
 
@@ -183,7 +183,7 @@ func TestRepository_Get(t *testing.T) {
 	t.Parallel()
 
 	connection, mock := ormmock.New(t)
-	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
+	instance := Repository[modelmock.ModelMock](&Database{orm: connection})
 
 	ormmock.MockSelect(
 		mock,
@@ -204,7 +204,7 @@ func TestRepository_Get_NoResultsError(t *testing.T) {
 	t.Parallel()
 
 	connection, mock := ormmock.New(t)
-	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
+	instance := Repository[modelmock.ModelMock](&Database{orm: connection})
 
 	ormmock.MockSelect(
 		mock,
@@ -226,7 +226,7 @@ func TestRepository_Get_QueryError(t *testing.T) {
 	t.Parallel()
 
 	connection, mock := ormmock.New(t)
-	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
+	instance := Repository[modelmock.ModelMock](&Database{orm: connection})
 
 	ormmock.MockSelect(
 		mock,
@@ -248,7 +248,7 @@ func TestRepository_One(t *testing.T) {
 	t.Parallel()
 
 	connection, mock := ormmock.New(t)
-	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
+	instance := Repository[modelmock.ModelMock](&Database{orm: connection})
 
 	ormmock.MockSelect(
 		mock,
@@ -269,7 +269,7 @@ func TestRepository_One_NoResultsError(t *testing.T) {
 	t.Parallel()
 
 	connection, mock := ormmock.New(t)
-	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
+	instance := Repository[modelmock.ModelMock](&Database{orm: connection})
 
 	ormmock.MockSelect(
 		mock,
@@ -291,7 +291,7 @@ func TestRepository_One_QueryError(t *testing.T) {
 	t.Parallel()
 
 	connection, mock := ormmock.New(t)
-	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
+	instance := Repository[modelmock.ModelMock](&Database{orm: connection})
 
 	ormmock.MockSelect(
 		mock,
@@ -313,7 +313,7 @@ func TestRepository_OrderBy(t *testing.T) {
 	t.Parallel()
 
 	connection, _ := ormmock.New(t)
-	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
+	instance := Repository[modelmock.ModelMock](&Database{orm: connection})
 
 	result := instance.OrderBy(Order{Column: "id", Descending: true})
 
@@ -329,7 +329,7 @@ func TestRepository_PartOf(t *testing.T) {
 	t.Parallel()
 
 	connection, _ := ormmock.New(t)
-	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
+	instance := Repository[modelmock.ModelMock](&Database{orm: connection})
 
 	transaction, _ := ormmock.New(t)
 
@@ -347,7 +347,7 @@ func TestRepository_Restore(t *testing.T) {
 	t.Parallel()
 
 	connection, mock := ormmock.New(t)
-	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
+	instance := Repository[modelmock.ModelMock](&Database{orm: connection})
 
 	model := &modelmock.ModelMock{Test: true}
 
@@ -389,7 +389,7 @@ func TestRepository_Restore_ExecError(t *testing.T) {
 	t.Parallel()
 
 	connection, mock := ormmock.New(t)
-	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
+	instance := Repository[modelmock.ModelMock](&Database{orm: connection})
 
 	model := &modelmock.ModelMock{Test: true}
 
@@ -432,7 +432,7 @@ func TestRepository_Update(t *testing.T) {
 	t.Parallel()
 
 	connection, mock := ormmock.New(t)
-	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
+	instance := Repository[modelmock.ModelMock](&Database{orm: connection})
 
 	model := &modelmock.ModelMock{Test: true}
 
@@ -454,7 +454,7 @@ func TestRepository_Update_ExecError(t *testing.T) {
 	t.Parallel()
 
 	connection, mock := ormmock.New(t)
-	instance := Repository[modelmock.ModelMock](&Connection{orm: connection})
+	instance := Repository[modelmock.ModelMock](&Database{orm: connection})
 
 	model := &modelmock.ModelMock{Test: true}
 
@@ -505,10 +505,13 @@ func TestRepository_addMeta(t *testing.T) {
 	)
 	require.NoError(t, err)
 
+	database, ok := connection.(*Database)
+	require.True(t, ok)
+
 	actual := repository[modelmock.ModelMock]{
-		connection: connection.orm,
+		connection: database.orm,
 	}
-	transaction := actual.addMeta(connection.orm)
+	transaction := actual.addMeta(database.orm)
 
 	// test everything is empty
 	assert.False(t, transaction.Statement.Unscoped)
@@ -516,13 +519,13 @@ func TestRepository_addMeta(t *testing.T) {
 
 	// add bypass delete
 	actual.unscoped = true
-	transaction = actual.addMeta(connection.orm)
+	transaction = actual.addMeta(database.orm)
 
 	assert.True(t, transaction.Statement.Unscoped)
 
 	// add order by
 	actual.order = []Order{{Column: "id"}}
-	transaction = actual.addMeta(connection.orm)
+	transaction = actual.addMeta(database.orm)
 
 	assert.Equal(
 		t,
@@ -534,14 +537,14 @@ func TestRepository_addMeta(t *testing.T) {
 
 	// add eager load
 	actual.relations = []relation{{join: false, key: "Relation"}}
-	transaction = actual.addMeta(connection.orm)
+	transaction = actual.addMeta(database.orm)
 
 	assert.Len(t, transaction.Statement.Preloads, 1)
 	assert.Equal(t, map[string][]interface{}{"Relation": nil}, transaction.Statement.Preloads)
 
 	// add join
 	actual.relations = []relation{{join: true, key: "Relation"}}
-	transaction = actual.addMeta(connection.orm)
+	transaction = actual.addMeta(database.orm)
 
 	assert.Len(t, transaction.Statement.Joins, 1)
 	assert.Equal(t, "Relation", transaction.Statement.Joins[0].Name)

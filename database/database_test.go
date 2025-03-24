@@ -18,7 +18,8 @@ func TestConnect(t *testing.T) {
 	connection, err := database.Connect(false, "sqlite", "", ":memory:", "", 0, "", "", "")
 	require.NoError(t, err)
 
-	assert.IsType(t, &database.Connection{}, connection)
+	assert.IsType(t, &database.Database{}, connection)
+	assert.Implements(t, (*database.Connection)(nil), connection)
 }
 
 func TestConnect_ErrInvalidDialector(t *testing.T) {

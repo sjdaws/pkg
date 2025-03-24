@@ -11,8 +11,14 @@ import (
 	"github.com/sjdaws/pkg/errors"
 )
 
-// Connection instance.
-type Connection struct {
+// Connection interface.
+type Connection interface {
+	Migrate(model ...any) error
+	Transaction() *gorm.DB
+}
+
+// Database instance.
+type Database struct {
 	orm *gorm.DB
 }
 
@@ -32,7 +38,7 @@ func Connect(
 	socket string,
 	sslmode string,
 	username string,
-) (*Connection, error) {
+) (Connection, error) {
 	var options Driver
 
 	switch strings.ToLower(driver) {
@@ -80,17 +86,17 @@ func Connect(
 		return nil, errors.Wrap(err, "unable to open connection to database")
 	}
 
-	return &Connection{orm: orm}, nil
+	return &Database{orm: orm}, nil
 }
 
 // Migrate run database migrations.
-func (c *Connection) Migrate(model ...any) error {
+func (d *Database) Migrate(model ...any) error {
 	// Force InnoDB for MySQL-like DBs
-	if c.orm.Dialector.Name() == "mysql" {
-		c.orm.Set("gorm:table_options", "ENGINE=InnoDB")
+	if d.orm.Dialector.Name() == "mysql" {
+		d.orm.Set("gorm:table_options", "ENGINE=InnoDB")
 	}
 
-	err := c.orm.AutoMigrate(model...)
+	err := d.orm.AutoMigrate(model...)
 	if err != nil {
 		return errors.Wrap(err, "unable to invoke database migrations")
 	}
@@ -99,8 +105,8 @@ func (c *Connection) Migrate(model ...any) error {
 }
 
 // Transaction start a transaction and return transactional connection.
-func (c *Connection) Transaction() *gorm.DB {
-	return c.orm.Begin()
+func (d *Database) Transaction() *gorm.DB {
+	return d.orm.Begin()
 }
 
 // createConfiguration creates a configuration for a dialector.
