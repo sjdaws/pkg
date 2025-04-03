@@ -18,3 +18,22 @@ func Atoi(value string) int {
 
 	return float
 }
+
+// Mask part of a string to provide enough for comparison, without revealing too much information.
+func Mask(value string, maxLength int) string {
+	if len(value) < 1 {
+		return ""
+	}
+
+	// Determine half-length of secret
+	divisor := 2
+	half := len(value) / divisor
+
+	// If half the secret is shorter than max, only show half
+	if half < maxLength {
+		return "..." + value[len(value)-half:]
+	}
+
+	// Return max characters
+	return "..." + value[len(value)-maxLength:]
+}

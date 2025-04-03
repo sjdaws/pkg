@@ -198,7 +198,6 @@ func (r repository[m]) addMeta(transaction *gorm.DB) *gorm.DB {
 			transaction = transaction.InnerJoins(relationship.key, relationship.where...)
 
 			continue
-
 		}
 
 		// Preload hasmany relationships, this will do a second select for the relationship

@@ -106,6 +106,7 @@ func (c *Conversion) Run() error {
 
 	var stdErr strings.Builder
 
+	//nolint:gosec // Assignment to variable intentional to overload stderr
 	command := exec.Command("ffmpeg", arguments...)
 	command.Stderr = &stdErr
 

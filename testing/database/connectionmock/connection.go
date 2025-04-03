@@ -24,6 +24,7 @@ func New(t *testing.T) database.Connection {
 	// Create temporary database
 	filename := t.TempDir() + "/test.db"
 
+	//nolint:gosec // Filename needs to be a reference to refer to later
 	_, err := os.Create(filename)
 	require.NoError(t, err)
 

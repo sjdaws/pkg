@@ -48,6 +48,7 @@ func Probe(filename string) (*Result, error) {
 
 	var stdOut, stdErr strings.Builder
 
+	//nolint:gosec // Assignment to variable intentional to overload stderr and stdout
 	command := exec.Command("ffprobe", args...)
 	command.Stderr = &stdErr
 	command.Stdout = &stdOut

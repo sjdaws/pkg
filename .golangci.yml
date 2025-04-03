@@ -1,45 +1,53 @@
-issues:
-  exclude-rules:
-    - path: _test.go
-      linters:
-        - exhaustruct
-        - funlen
-        - varnamelen
-    - path: database/repository.go
-      linters:
-        - interfacebloat
+version: "2"
 
 linters:
-  enable-all: true
+  default: all
   disable:
-    - ireturn      # testing is harder without interfaces
-    - lll          # long live the long line
-    - tenv         # deprecated
-
-linters-settings:
-  depguard:
+    - ireturn       # testing is harder without interfaces
+    - lll           # long live the long line
+    - tagliatelle   # we don't control what third parties use for their API
+  exclusions:
     rules:
-      lax:
-        deny:
-          - pkg: github.com/sjdaws/pkg/testing/connectionmock
-            desc: "you're doing this the hard way, use repositorymock instead"
-        files:
-          - $all
-        list-mode: lax
-  gci:
-    sections:
-      - standard
-      - default
-      - prefix(github.com/sjdaws/pkg)
-  ireturn:
-    allow:
-      - (ar|er|Factory|mock|or)$
-      - error
-  tagliatelle:
-    case:
-      overrides:
-        - pkg: oauth/providers/plex
-          rules:
-            json: camel
+      - linters:
+          - exhaustruct
+          - funlen
+          - varnamelen
+        path: _test.go
+      - linters:
+          - interfacebloat
+        path: database/repository.go
+  settings:
+    depguard:
       rules:
-        json: snake
+        lax:
+          list-mode: lax
+          files:
+            - $all
+          deny:
+            - pkg: github.com/sjdaws/pkg/testing/connectionmock
+              desc: you're doing this the hard way, use repositorymock instead
+    ireturn:
+      allow:
+        - (ar|er|Factory|mock|or)$
+        - error
+    revive:
+      rules:
+        - name: package-comments
+          disabled: true
+    tagliatelle:
+      case:
+        rules:
+          json: snake
+
+formatters:
+  enable:
+    - gci
+    - gofmt
+    - gofumpt
+    - goimports
+  settings:
+    gci:
+      sections:
+        - standard
+        - default
+        - prefix(github.com/sjdaws/pkg)

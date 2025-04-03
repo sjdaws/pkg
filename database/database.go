@@ -92,7 +92,7 @@ func Connect(
 // Migrate run database migrations.
 func (d *Database) Migrate(model ...any) error {
 	// Force InnoDB for MySQL-like DBs
-	if d.orm.Dialector.Name() == "mysql" {
+	if d.orm.Name() == "mysql" {
 		d.orm.Set("gorm:table_options", "ENGINE=InnoDB")
 	}
 

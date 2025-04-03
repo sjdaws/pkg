@@ -108,3 +108,39 @@ func TestAtof(t *testing.T) {
 		})
 	}
 }
+
+func TestMask(t *testing.T) {
+	t.Parallel()
+
+	testcases := map[string]struct {
+		expected  string
+		maxLength int
+		secret    string
+	}{
+		"no secret": {
+			expected:  "",
+			maxLength: 6,
+			secret:    "",
+		},
+		"short secret": {
+			expected:  "...rt",
+			maxLength: 6,
+			secret:    "short",
+		},
+		"long secret": {
+			expected:  "...secret",
+			maxLength: 6,
+			secret:    "a really long secret",
+		},
+	}
+
+	for name, testcase := range testcases {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
+			actual := common.Mask(testcase.secret, testcase.maxLength)
+
+			assert.Equal(t, testcase.expected, actual)
+		})
+	}
+}
