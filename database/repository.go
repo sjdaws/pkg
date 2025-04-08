@@ -31,6 +31,12 @@ type Order struct {
 	Descending bool
 }
 
+// Raw type for holding a raw query with optional parameters.
+type Raw struct {
+	Parameters []any
+	Query      string
+}
+
 // repository base repository which all repositories extend.
 type repository[m Model] struct {
 	connection *gorm.DB
@@ -220,6 +226,9 @@ func (r repository[m]) query(where ...any) *gorm.DB {
 			}
 
 			query = query.Where(subQuery)
+
+		case Raw:
+			query = query.Where(state.Query, state.Parameters...)
 
 		default:
 			query = query.Where(condition)

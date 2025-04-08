@@ -568,6 +568,11 @@ func TestRepository_query(t *testing.T) {
 			expectedQuery:      "SELECT * FROM `model_mocks` WHERE (`model_mocks`.`test` = ? OR `model_mocks`.`id` = ?) AND `model_mocks`.`deleted_at` IS NULL",
 			where:              []any{Or{&modelmock.ModelMock{Test: true}, &modelmock.ModelMock{ID: 4}}},
 		},
+		"raw": {
+			expectedParameters: []driver.Value{3, true},
+			expectedQuery:      "SELECT * FROM `model_mocks` WHERE `model_mocks`.`test` = ? AND `model_mocks`.`deleted_at` IS NULL",
+			where:              []any{Raw{Query: "test = ?", Parameters: []any{true}}},
+		},
 		"where": {
 			expectedParameters: []driver.Value{true},
 			expectedQuery:      "SELECT * FROM `model_mocks` WHERE `model_mocks`.`test` = ? AND `model_mocks`.`deleted_at` IS NULL",
