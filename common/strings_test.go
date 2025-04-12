@@ -109,6 +109,42 @@ func TestAtof(t *testing.T) {
 	}
 }
 
+func TestFriendlyName(t *testing.T) {
+	t.Parallel()
+
+	testcases := map[string]struct {
+		expected string
+		value    string
+	}{
+		"camelCase": {
+			expected: "Camel case name test",
+			value:    "camelCaseNameTest",
+		},
+		"PascalCase": {
+			expected: "Pascal case name test",
+			value:    "PascalCaseNameTest",
+		},
+		"with capital letters": {
+			expected: "Super SQL test",
+			value:    "SuperSQLTest",
+		},
+		"more capital letters": {
+			expected: "Test ID",
+			value:    "testID",
+		},
+	}
+
+	for name, testcase := range testcases {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
+			actual := common.FriendlyName(testcase.value)
+
+			assert.Equal(t, testcase.expected, actual)
+		})
+	}
+}
+
 func TestMask(t *testing.T) {
 	t.Parallel()
 
@@ -139,6 +175,36 @@ func TestMask(t *testing.T) {
 			t.Parallel()
 
 			actual := common.Mask(testcase.secret, testcase.maxLength)
+
+			assert.Equal(t, testcase.expected, actual)
+		})
+	}
+}
+
+func TestOptions(t *testing.T) {
+	t.Parallel()
+
+	testcases := map[string]struct {
+		expected string
+		prefix   string
+		value    string
+	}{
+		"options": {
+			expected: "'apple', 'banana', 'orange', 'watermelon'",
+			value:    "apple banana orange watermelon",
+		},
+		"with prefix": {
+			expected: "'apple', 'banana', 'orange', and 'watermelon'",
+			prefix:   "and",
+			value:    "apple banana orange watermelon",
+		},
+	}
+
+	for name, testcase := range testcases {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
+			actual := common.Options(testcase.value, testcase.prefix)
 
 			assert.Equal(t, testcase.expected, actual)
 		})
