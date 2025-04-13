@@ -39,14 +39,16 @@ func (t *Tester) AddCustomValidation(key string, validation validator.Func, mess
 		return errors.Wrap(err, "unable to add custom validator")
 	}
 
-	t.messages[key] = message
+	t.AddFailureMessage(key, message)
 
 	return nil
 }
 
 // AddFailureMessage add a custom failure message handler.
 func (t *Tester) AddFailureMessage(key string, message MessageFunc) {
-	t.messages[key] = message
+	if message != nil {
+		t.messages[key] = message
+	}
 }
 
 // Validate a request against the rules on a struct.

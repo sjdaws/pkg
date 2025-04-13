@@ -58,6 +58,40 @@ func TestParse_InvalidUUID(t *testing.T) {
 	assert.Equal(t, uuid.Nil, actual)
 }
 
+func TestUUID_MarshalJSON(t *testing.T) {
+	t.Parallel()
+
+	type Test struct {
+		Test uuid.UUID `json:"uuid"`
+	}
+
+	target := Test{
+		Test: uuid.MustParse("00000000-0000-0000-0000-000000000001"),
+	}
+
+	actual, err := json.Marshal(target)
+	require.NoError(t, err)
+
+	assert.JSONEq(t, `{"uuid":"00000000-0000-0000-0000-000000000001"}`, string(actual))
+}
+
+func TestUUID_MarshalJSON_NilUUID(t *testing.T) {
+	t.Parallel()
+
+	type Test struct {
+		Test uuid.UUID `json:"uuid"`
+	}
+
+	target := Test{
+		Test: uuid.MustParse("00000000-0000-0000-0000-000000000000"),
+	}
+
+	actual, err := json.Marshal(target)
+	require.NoError(t, err)
+
+	assert.JSONEq(t, `{"uuid":null}`, string(actual))
+}
+
 func TestUUID_UnmarshalJSON(t *testing.T) {
 	t.Parallel()
 

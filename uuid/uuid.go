@@ -2,6 +2,7 @@ package uuid
 
 import (
 	"encoding/hex"
+	"encoding/json"
 
 	"github.com/google/uuid"
 
@@ -9,7 +10,7 @@ import (
 )
 
 // UUID type.
-type UUID uuid.UUID
+type UUID uuid.UUID //nolint:recvcheck // UnmarshalJSON requires a pointer while remaining methods require value
 
 // Nil empty UUID.
 var Nil UUID //nolint:gochecknoglobals // Emulating uuid.Nil from google/uuid
@@ -36,8 +37,17 @@ func Parse(value string) (UUID, error) {
 	return UUID(parsed), nil
 }
 
+// MarshalJSON gracefully handle marshaling to JSON.
+func (u UUID) MarshalJSON() ([]byte, error) {
+	if u == Nil {
+		return json.Marshal(nil) //nolint:wrapcheck // Marshaling nil will never throw an error
+	}
+
+	return json.Marshal(u.String()) //nolint:wrapcheck // Marshaling a string will never throw an error
+}
+
 // String convert UUID to string.
-func (u *UUID) String() string {
+func (u UUID) String() string {
 	var buffer [36]byte
 
 	hex.Encode(buffer[:], u[:4])
