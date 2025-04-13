@@ -124,12 +124,14 @@ func TestFilesystem_UnmarshalYAML(t *testing.T) {
 
 	fs := setupFilesystem(t)
 
-	err := fs.UnmarshalYAML("", map[string]any{})
+	target := map[string]any{}
+
+	err := fs.UnmarshalYAML("", &target)
 	require.NoError(t, err)
 
 	fs.UnmarshalYAMLError = errors.New("unmarshal error")
 
-	err = fs.UnmarshalYAML("", map[string]any{})
+	err = fs.UnmarshalYAML("", target)
 	require.Error(t, err)
 
 	require.EqualError(t, err, "unmarshal error")

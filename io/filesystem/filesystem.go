@@ -3,8 +3,8 @@ package filesystem
 import (
 	"os"
 
+	"github.com/goccy/go-yaml"
 	"github.com/spf13/afero"
-	"gopkg.in/yaml.v3"
 
 	"github.com/sjdaws/pkg/errors"
 	"github.com/sjdaws/pkg/io"
