@@ -75,7 +75,7 @@ func Options(options string, finalPrefix string) string {
 		words = append(words, "'"+value+"'")
 	}
 
-	if finalPrefix != "" {
+	if finalPrefix != "" && len(words) > 1 {
 		words[len(words)-1] = finalPrefix + " " + words[len(words)-1]
 	}
 

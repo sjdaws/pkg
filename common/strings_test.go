@@ -198,6 +198,11 @@ func TestOptions(t *testing.T) {
 			prefix:   "and",
 			value:    "apple banana orange watermelon",
 		},
+		"with prefix one option": {
+			expected: "'apple'",
+			prefix:   "and",
+			value:    "apple",
+		},
 	}
 
 	for name, testcase := range testcases {
