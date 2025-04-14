@@ -375,7 +375,8 @@ yaml
 
 	into := make(map[string]any)
 
-	expected := "unable to unmarshal yaml file: required pointer type value"
+	expected := "unable to unmarshal yaml file: yaml: unmarshal errors:\n" +
+		"  line 2: cannot unmarshal !!str `yaml bad` into map[string]interface {}"
 
 	err = fs.UnmarshalYAML("config.yaml", into)
 	require.Error(t, err)
