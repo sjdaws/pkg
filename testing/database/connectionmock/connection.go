@@ -6,6 +6,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"github.com/sjdaws/pkg/database/drivers"
 	"github.com/sjdaws/pkg/errors"
@@ -35,7 +36,30 @@ func New(t *testing.T) *DatabaseMock {
 	dialector, err := options.GetDialector()
 	require.NoError(t, err)
 
-	orm, err := gorm.Open(dialector, nil)
+	config := &gorm.Config{
+		AllowGlobalUpdate:                        false,
+		ClauseBuilders:                           nil,
+		ConnPool:                                 nil,
+		CreateBatchSize:                          0,
+		Dialector:                                nil,
+		DisableAutomaticPing:                     false,
+		DisableForeignKeyConstraintWhenMigrating: false,
+		DisableNestedTransaction:                 false,
+		DryRun:                                   false,
+		FullSaveAssociations:                     false,
+		IgnoreRelationshipsWhenMigrating:         false,
+		Logger:                                   logger.Default.LogMode(logger.Info),
+		NamingStrategy:                           nil,
+		NowFunc:                                  nil,
+		Plugins:                                  nil,
+		PrepareStmt:                              false,
+		PropagateUnscoped:                        false,
+		QueryFields:                              false,
+		SkipDefaultTransaction:                   false,
+		TranslateError:                           false,
+	}
+
+	orm, err := gorm.Open(dialector, config)
 	require.NoError(t, err)
 
 	return &DatabaseMock{
@@ -45,7 +69,7 @@ func New(t *testing.T) *DatabaseMock {
 }
 
 // Migrate perform database migrations.
-func (d DatabaseMock) Migrate(model ...any) error {
+func (d *DatabaseMock) Migrate(model ...any) error {
 	err := d.orm.AutoMigrate(model...)
 	if err != nil || d.Fail {
 		return errors.Wrap(err, "migration failed")
@@ -54,8 +78,13 @@ func (d DatabaseMock) Migrate(model ...any) error {
 	return nil
 }
 
+// ORM return the underlying ORM.
+func (d *DatabaseMock) ORM() *gorm.DB {
+	return d.orm
+}
+
 // Transaction create a new database transaction.
-func (d DatabaseMock) Transaction() *gorm.DB {
+func (d *DatabaseMock) Transaction() *gorm.DB {
 	transaction := d.orm.Begin()
 
 	if d.Fail {

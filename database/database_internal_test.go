@@ -10,7 +10,7 @@ import (
 	"github.com/sjdaws/pkg/testing/database/ormmock"
 )
 
-func TestMigrate(t *testing.T) {
+func TestConnection_Migrate(t *testing.T) {
 	t.Parallel()
 
 	orm, mock := ormmock.New(t)

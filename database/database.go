@@ -14,6 +14,7 @@ import (
 // Connection interface.
 type Connection interface {
 	Migrate(model ...any) error
+	ORM() *gorm.DB
 	Transaction() *gorm.DB
 }
 
@@ -102,6 +103,11 @@ func (d *Database) Migrate(model ...any) error {
 	}
 
 	return nil
+}
+
+// ORM return the underlying ORM.
+func (d *Database) ORM() *gorm.DB {
+	return d.orm
 }
 
 // Transaction start a transaction and return transactional connection.

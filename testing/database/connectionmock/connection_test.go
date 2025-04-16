@@ -41,6 +41,14 @@ func TestConnection_Migrate_Error(t *testing.T) {
 	require.EqualError(t, err, "migration failed")
 }
 
+func TestConnection_ORM(t *testing.T) {
+	t.Parallel()
+
+	connection := connectionmock.New(t)
+
+	assert.IsType(t, &gorm.DB{}, connection.ORM())
+}
+
 func TestConnection_Transaction(t *testing.T) {
 	t.Parallel()
 

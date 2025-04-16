@@ -62,16 +62,12 @@ func Repository[m Model](connection Connection) Persister[m] {
 	var model m
 
 	instance := repository[m]{
-		connection: nil,
+		connection: connection.ORM(),
 		model:      model,
 		models:     make([]m, 0),
 		order:      make([]Order, 0),
 		relations:  make([]relation, 0),
 		unscoped:   false,
-	}
-
-	if database, ok := connection.(*Database); ok {
-		instance.connection = database.orm
 	}
 
 	return instance

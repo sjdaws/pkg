@@ -67,7 +67,7 @@ func TestConnect_ErrOpenDatabaseFailure(t *testing.T) {
 	assert.Nil(t, connection)
 }
 
-func TestNew_ErrMigrationFailure(t *testing.T) {
+func TestConnect_ErrMigrationFailure(t *testing.T) {
 	t.Parallel()
 
 	// Enforce read only database
@@ -80,7 +80,16 @@ func TestNew_ErrMigrationFailure(t *testing.T) {
 	require.EqualError(t, err, "unable to invoke database migrations: attempt to write a readonly database (8)")
 }
 
-func TestRepository(t *testing.T) {
+func TestConnection_ORM(t *testing.T) {
+	t.Parallel()
+
+	connection, err := database.Connect(false, "sqlite", "", ":memory:", "", 0, "", "", "")
+	require.NoError(t, err)
+
+	assert.IsType(t, &gorm.DB{}, connection.ORM())
+}
+
+func TestConnection_Repository(t *testing.T) {
 	t.Parallel()
 
 	connection, err := database.Connect(false, "sqlite", "", ":memory:", "", 0, "", "", "")
@@ -91,7 +100,7 @@ func TestRepository(t *testing.T) {
 	assert.Implements(t, (*database.Persister[modelmock.ModelMock])(nil), instance)
 }
 
-func TestTransaction(t *testing.T) {
+func TestConnection_Transaction(t *testing.T) {
 	t.Parallel()
 
 	connection, err := database.Connect(false, "sqlite", "", ":memory:", "", 0, "", "", "")
