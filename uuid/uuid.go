@@ -1,6 +1,7 @@
 package uuid
 
 import (
+	"database/sql/driver"
 	"encoding/hex"
 	"encoding/json"
 
@@ -46,6 +47,47 @@ func (u UUID) MarshalJSON() ([]byte, error) {
 	return json.Marshal(u.String()) //nolint:wrapcheck // Marshaling a string will never throw an error
 }
 
+// Scan implements sql.Scanner so UUIDs can be read from databases transparently.
+func (uuid *UUID) Scan(value interface{}) error {
+	switch source := value.(type) {
+	case nil:
+		return nil
+
+	case string:
+		// if an empty UUID comes from a table, we return a null UUID
+		if source == "" {
+			return nil
+		}
+
+		// see Parse for required string format
+		parsed, err := Parse(source)
+		if err != nil {
+			return errors.Wrap(err, "unable to parse uuid string '%s'", source)
+		}
+
+		*uuid = parsed
+
+	case []byte:
+		// if an empty UUID comes from a table, we return a null UUID
+		if len(source) == 0 {
+			return nil
+		}
+
+		// assumes a simple slice of bytes if 16 bytes otherwise attempts to parse
+		const simpleSize = 16
+		if len(source) != simpleSize {
+			return uuid.Scan(string(source))
+		}
+
+		copy((*uuid)[:], source)
+
+	default:
+		return errors.New("invalid uuid type '%T'", source)
+	}
+
+	return nil
+}
+
 // String convert UUID to string.
 func (u UUID) String() string {
 	var buffer [36]byte
@@ -73,4 +115,11 @@ func (u *UUID) UnmarshalJSON(data []byte) error {
 	*u = UUID(id)
 
 	return nil
+}
+
+// Value implements sql.Valuer so that UUIDs can be written to databases transparently.
+//
+//nolint:ireturn // return value is determined by database driver interface.
+func (uuid UUID) Value() (driver.Value, error) {
+	return uuid.String(), nil
 }
