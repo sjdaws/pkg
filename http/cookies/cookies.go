@@ -18,7 +18,7 @@ type CookieJar interface {
 }
 
 // New create a new Cookie.
-func New() CookieJar {
+func New() *Cookie {
 	return &Cookie{}
 }
 

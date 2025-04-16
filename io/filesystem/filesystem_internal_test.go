@@ -34,11 +34,8 @@ func TestNew(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
-			fs, err := New(testcase.filesystem)
+			filesystem, err := New(testcase.filesystem)
 			require.NoError(t, err)
-
-			filesystem, ok := fs.(*Filesystem)
-			require.True(t, ok)
 
 			assert.Equal(t, testcase.filesystem, filesystem.filesystem)
 		})

@@ -33,13 +33,9 @@ func TestConnection_Migrate_Error(t *testing.T) {
 	t.Parallel()
 
 	connection := connectionmock.New(t)
+	connection.Fail = true
 
-	mock, ok := connection.(*connectionmock.DatabaseMock)
-	require.True(t, ok)
-
-	mock.Fail = true
-
-	err := mock.Migrate()
+	err := connection.Migrate()
 	require.Error(t, err)
 
 	require.EqualError(t, err, "migration failed")
@@ -59,13 +55,9 @@ func TestConnection_Transaction_Error(t *testing.T) {
 	t.Parallel()
 
 	connection := connectionmock.New(t)
+	connection.Fail = true
 
-	mock, ok := connection.(*connectionmock.DatabaseMock)
-	require.True(t, ok)
-
-	mock.Fail = true
-
-	transaction := mock.Transaction()
+	transaction := connection.Transaction()
 
 	assert.IsType(t, &gorm.DB{}, transaction)
 

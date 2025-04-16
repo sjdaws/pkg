@@ -7,7 +7,6 @@ import (
 	"gopkg.in/yaml.v3"
 
 	"github.com/sjdaws/pkg/errors"
-	"github.com/sjdaws/pkg/io"
 )
 
 // Filesystem implementation of Reader.
@@ -24,14 +23,14 @@ const (
 )
 
 // Default create a new Filesystem using defaults.
-func Default() io.ReadWriter {
+func Default() *Filesystem {
 	filesystem, _ := New(afero.NewOsFs())
 
 	return filesystem
 }
 
 // New create a new Filesystem.
-func New(filesystem afero.Fs) (io.ReadWriter, error) {
+func New(filesystem afero.Fs) (*Filesystem, error) {
 	if filesystem == nil {
 		return nil, errors.New("nil filesystem specified, use Default() to use operating system filesystem")
 	}

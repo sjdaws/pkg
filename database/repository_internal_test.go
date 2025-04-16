@@ -505,13 +505,10 @@ func TestRepository_addMeta(t *testing.T) {
 	)
 	require.NoError(t, err)
 
-	database, ok := connection.(*Database)
-	require.True(t, ok)
-
 	actual := repository[modelmock.ModelMock]{
-		connection: database.orm,
+		connection: connection.orm,
 	}
-	transaction := actual.addMeta(database.orm)
+	transaction := actual.addMeta(connection.orm)
 
 	// test everything is empty
 	assert.False(t, transaction.Statement.Unscoped)
@@ -519,13 +516,13 @@ func TestRepository_addMeta(t *testing.T) {
 
 	// add bypass delete
 	actual.unscoped = true
-	transaction = actual.addMeta(database.orm)
+	transaction = actual.addMeta(connection.orm)
 
 	assert.True(t, transaction.Statement.Unscoped)
 
 	// add order by
 	actual.order = []Order{{Column: "id"}}
-	transaction = actual.addMeta(database.orm)
+	transaction = actual.addMeta(connection.orm)
 
 	assert.Equal(
 		t,
@@ -537,14 +534,14 @@ func TestRepository_addMeta(t *testing.T) {
 
 	// add eager load
 	actual.relations = []relation{{join: false, key: "Relation"}}
-	transaction = actual.addMeta(database.orm)
+	transaction = actual.addMeta(connection.orm)
 
 	assert.Len(t, transaction.Statement.Preloads, 1)
 	assert.Equal(t, map[string][]interface{}{"Relation": nil}, transaction.Statement.Preloads)
 
 	// add join
 	actual.relations = []relation{{join: true, key: "Relation"}}
-	transaction = actual.addMeta(database.orm)
+	transaction = actual.addMeta(connection.orm)
 
 	assert.Len(t, transaction.Statement.Joins, 1)
 	assert.Equal(t, "Relation", transaction.Statement.Joins[0].Name)

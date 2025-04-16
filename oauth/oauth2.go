@@ -20,7 +20,7 @@ type Factory interface {
 type ProviderFactory struct{}
 
 // New create a ProviderFactory.
-func New() Factory {
+func New() *ProviderFactory {
 	return &ProviderFactory{}
 }
 

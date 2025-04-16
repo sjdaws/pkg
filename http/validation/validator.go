@@ -23,7 +23,7 @@ type Tester struct {
 type MessageFunc func(field string, failure validator.FieldError) string
 
 // New create a new Validator.
-func New() Validator {
+func New() *Tester {
 	messages := make(map[string]func(field string, failure validator.FieldError) string)
 
 	return &Tester{

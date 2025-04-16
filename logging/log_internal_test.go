@@ -13,12 +13,10 @@ func TestDefault(t *testing.T) {
 	t.Parallel()
 
 	logger := Default()
-	log, ok := logger.(*Log)
-	require.True(t, ok)
 
-	assert.Equal(t, defaultVerbosity, log.verbosity)
-	assert.Equal(t, defaultDepth, log.depth)
-	assert.Equal(t, os.Stdout, log.writer)
+	assert.Equal(t, defaultVerbosity, logger.verbosity)
+	assert.Equal(t, defaultDepth, logger.depth)
+	assert.Equal(t, os.Stdout, logger.writer)
 }
 
 func TestNew(t *testing.T) {
@@ -73,11 +71,8 @@ func TestNew(t *testing.T) {
 			logger, err := New(testcase.verbosity, io.Discard, testcase.depth)
 			require.NoError(t, err)
 
-			log, ok := logger.(*Log)
-			require.True(t, ok)
-
-			assert.Equal(t, testcase.verbosity, log.verbosity)
-			assert.Equal(t, testcase.expectedDepth, log.depth)
+			assert.Equal(t, testcase.verbosity, logger.verbosity)
+			assert.Equal(t, testcase.expectedDepth, logger.depth)
 		})
 	}
 }
@@ -87,14 +82,12 @@ func TestLog_SetDepth(t *testing.T) {
 
 	logger := Default()
 
-	log, ok := logger.(*Log)
-	require.True(t, ok)
-	assert.Equal(t, defaultDepth, log.depth)
+	assert.Equal(t, defaultDepth, logger.depth)
 
-	logger = log.SetDepth(5)
-	log, ok = logger.(*Log)
+	log := logger.SetDepth(5)
+	logger, ok := log.(*Log)
 	require.True(t, ok)
-	assert.Equal(t, 5, log.depth)
+	assert.Equal(t, 5, logger.depth)
 }
 
 func TestLog_SetVerbosity(t *testing.T) {
@@ -102,12 +95,10 @@ func TestLog_SetVerbosity(t *testing.T) {
 
 	logger := Default()
 
-	log, ok := logger.(*Log)
-	require.True(t, ok)
-	assert.Equal(t, Info, log.verbosity)
+	assert.Equal(t, Info, logger.verbosity)
 
-	logger = log.SetVerbosity(Error)
-	log, ok = logger.(*Log)
+	log := logger.SetVerbosity(Error)
+	logger, ok := log.(*Log)
 	require.True(t, ok)
-	assert.Equal(t, Error, log.verbosity)
+	assert.Equal(t, Error, logger.verbosity)
 }

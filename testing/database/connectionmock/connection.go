@@ -7,7 +7,6 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
-	"github.com/sjdaws/pkg/database"
 	"github.com/sjdaws/pkg/database/drivers"
 	"github.com/sjdaws/pkg/errors"
 )
@@ -18,7 +17,7 @@ type DatabaseMock struct {
 }
 
 // New mock database connection.
-func New(t *testing.T) database.Connection {
+func New(t *testing.T) *DatabaseMock {
 	t.Helper()
 
 	// Create temporary database

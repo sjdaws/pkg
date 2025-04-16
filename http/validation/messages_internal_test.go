@@ -108,10 +108,12 @@ func (v *validationError) Translate(_ ut.Translator) string {
 	return ""
 }
 
+//nolint:ireturn // Return type defined by validator.FieldError interface.
 func (v *validationError) Type() reflect.Type {
 	return reflect.TypeOf(v)
 }
 
+//nolint:ireturn // Return type defined by validator.FieldError interface.
 func (v *validationError) Value() interface{} {
 	return v.message
 }

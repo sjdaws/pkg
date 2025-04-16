@@ -38,7 +38,7 @@ func Connect(
 	socket string,
 	sslmode string,
 	username string,
-) (Connection, error) {
+) (*Database, error) {
 	var options Driver
 
 	switch strings.ToLower(driver) {

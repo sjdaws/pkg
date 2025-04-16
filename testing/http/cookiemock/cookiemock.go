@@ -13,9 +13,6 @@ type Cookie struct {
 	error map[string]string
 }
 
-// SessionIDCookieName name of session cookie containing session id.
-const SessionIDCookieName = "_session"
-
 // New create a new Cookie mock instance.
 func New() *Cookie {
 	return &Cookie{

@@ -3,7 +3,6 @@ version: "2"
 linters:
   default: all
   disable:
-    - ireturn       # testing is harder without interfaces
     - lll           # long live the long line
     - tagliatelle   # we don't control what third parties use for their API
   exclusions:

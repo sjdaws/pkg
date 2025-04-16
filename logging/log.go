@@ -31,14 +31,14 @@ const (
 )
 
 // Default create a new Logger using defaults.
-func Default() Logger {
+func Default() *Log {
 	logger, _ := New(defaultVerbosity, os.Stdout, defaultDepth)
 
 	return logger
 }
 
 // New create a new Logger.
-func New(verbosity Verbosity, writer io.Writer, depth int) (Logger, error) {
+func New(verbosity Verbosity, writer io.Writer, depth int) (*Log, error) {
 	if writer == nil {
 		return nil, errors.New("nil writer specified, to suppress logs use io.Discard")
 	}
