@@ -45,9 +45,10 @@ func New(t *testing.T) *DatabaseMock {
 }
 
 // Migrate perform database migrations.
-func (d DatabaseMock) Migrate(_ ...any) error {
-	if d.Fail {
-		return errors.New("migration failed")
+func (d DatabaseMock) Migrate(model ...any) error {
+	err := d.orm.AutoMigrate(model...)
+	if err != nil || d.Fail {
+		return errors.Wrap(err, "migration failed")
 	}
 
 	return nil
