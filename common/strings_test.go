@@ -109,6 +109,53 @@ func TestAtof(t *testing.T) {
 	}
 }
 
+func TestAtou64(t *testing.T) {
+	t.Parallel()
+
+	testcases := map[string]struct {
+		expected uint64
+		value    string
+	}{
+		"at start": {
+			expected: 0,
+			value:    "8string starts with a number",
+		},
+		"contains numbers": {
+			expected: 0,
+			value:    "string contains1 some numb2ers",
+		},
+		"invalid": {
+			expected: 0,
+			value:    "string contains no numbers",
+		},
+		"negative float": {
+			expected: -0,
+			value:    "-5.24",
+		},
+		"negative integer": {
+			expected: 0,
+			value:    "-4",
+		},
+		"valid float": {
+			expected: 0,
+			value:    "3.290",
+		},
+		"valid number": {
+			expected: 1,
+			value:    "1",
+		},
+	}
+
+	for name, testcase := range testcases {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
+			actual := common.Atou64(testcase.value)
+			assert.Equal(t, testcase.expected, actual)
+		})
+	}
+}
+
 func TestFriendlyName(t *testing.T) {
 	t.Parallel()
 

@@ -11,16 +11,23 @@ import (
 
 // Atof convert string to float ignoring errors.
 func Atof(value string) float64 {
-	integer, _ := strconv.ParseFloat(strings.TrimSpace(value), 64)
+	float, _ := strconv.ParseFloat(strings.TrimSpace(value), 64)
 
-	return integer
+	return float
 }
 
 // Atoi convert string to integer ignoring errors.
 func Atoi(value string) int {
-	float, _ := strconv.Atoi(strings.TrimSpace(value))
+	integer, _ := strconv.Atoi(strings.TrimSpace(value))
 
-	return float
+	return integer
+}
+
+// Atou64 convert string to uint64 ignoring errors.
+func Atou64(value string) uint64 {
+	integer, _ := strconv.ParseUint(value, 10, 64)
+
+	return integer
 }
 
 // FriendlyName converts CamelCaseStructFields into Camel case struct fields.
