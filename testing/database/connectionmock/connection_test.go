@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"github.com/sjdaws/pkg/database"
 	"github.com/sjdaws/pkg/testing/database/connectionmock"
@@ -18,6 +19,20 @@ func TestNew(t *testing.T) {
 
 	assert.IsType(t, &connectionmock.DatabaseMock{}, connection)
 	assert.Implements(t, (*database.Connection)(nil), connection)
+}
+
+func TestNew_Options(t *testing.T) {
+	t.Parallel()
+
+	connection := connectionmock.New(t)
+
+	assert.Equal(t, logger.Default.LogMode(logger.Warn), connection.ORM().Logger)
+	assert.False(t, connection.Fail)
+
+	connection = connectionmock.New(t, connectionmock.Options{AlwaysFail: true, DebugMode: true, FileBased: true})
+
+	assert.Equal(t, logger.Default.LogMode(logger.Info), connection.ORM().Logger)
+	assert.True(t, connection.Fail)
 }
 
 func TestConnection_Migrate(t *testing.T) {

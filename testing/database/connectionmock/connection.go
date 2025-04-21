@@ -12,28 +12,48 @@ import (
 	"github.com/sjdaws/pkg/errors"
 )
 
+// DatabaseMock mock database instance.
 type DatabaseMock struct {
 	Fail bool
 	orm  *gorm.DB
 }
 
+// Options various settings which can be toggled when creating a mock connection.
+type Options struct {
+	AlwaysFail bool
+	DebugMode  bool
+	FileBased  bool
+}
+
 // New mock database connection.
-func New(t *testing.T) *DatabaseMock {
+func New(t *testing.T, options ...Options) *DatabaseMock {
 	t.Helper()
 
-	// Create temporary database
-	filename := t.TempDir() + "/test.db"
+	// Process options
+	var debug, fail, file bool
 
-	//nolint:gosec // Filename needs to be a reference to refer to later
-	_, err := os.Create(filename)
-	require.NoError(t, err)
+	if len(options) > 0 {
+		debug = options[0].DebugMode
+		fail = options[0].AlwaysFail
+		file = options[0].FileBased
+	}
+
+	filename := ":memory:"
+
+	if file {
+		// Create temporary database
+		filename = t.TempDir() + "/test.db"
+
+		_, err := os.Create(filename)
+		require.NoError(t, err)
+	}
 
 	// Do an actual connection in case we want to do things like migrations
-	options := drivers.SQLite3{
+	driver := drivers.SQLite3{
 		Filename: filename,
 	}
 
-	dialector, err := options.GetDialector()
+	dialector, err := driver.GetDialector()
 	require.NoError(t, err)
 
 	config := &gorm.Config{
@@ -48,7 +68,7 @@ func New(t *testing.T) *DatabaseMock {
 		DryRun:                                   false,
 		FullSaveAssociations:                     false,
 		IgnoreRelationshipsWhenMigrating:         false,
-		Logger:                                   logger.Default.LogMode(logger.Info),
+		Logger:                                   nil,
 		NamingStrategy:                           nil,
 		NowFunc:                                  nil,
 		Plugins:                                  nil,
@@ -59,11 +79,15 @@ func New(t *testing.T) *DatabaseMock {
 		TranslateError:                           false,
 	}
 
+	if debug {
+		config.Logger = logger.Default.LogMode(logger.Info)
+	}
+
 	orm, err := gorm.Open(dialector, config)
 	require.NoError(t, err)
 
 	return &DatabaseMock{
-		Fail: false,
+		Fail: fail,
 		orm:  orm,
 	}
 }
