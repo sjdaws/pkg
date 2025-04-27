@@ -7,6 +7,8 @@ import (
 	"github.com/fatih/camelcase"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
+
+	"github.com/sjdaws/pkg/uuid"
 )
 
 // Atof convert string to float ignoring errors.
@@ -21,6 +23,13 @@ func Atoi(value string) int {
 	integer, _ := strconv.Atoi(strings.TrimSpace(value))
 
 	return integer
+}
+
+// Atou convert string to uuid ignoring errors.
+func Atou(value string) uuid.UUID {
+	parsed, _ := uuid.Parse(strings.TrimSpace(value))
+
+	return parsed
 }
 
 // Atou64 convert string to uint64 ignoring errors.

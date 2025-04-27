@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/sjdaws/pkg/common"
+	"github.com/sjdaws/pkg/uuid"
 )
 
 func TestAtoi(t *testing.T) {
@@ -105,6 +106,45 @@ func TestAtof(t *testing.T) {
 			}
 
 			assert.InEpsilon(t, testcase.expected, actual, 0.0001)
+		})
+	}
+}
+
+func TestAtou(t *testing.T) {
+	t.Parallel()
+
+	testcases := map[string]struct {
+		expected uuid.UUID
+		value    string
+	}{
+		"invalid": {
+			expected: uuid.Nil,
+			value:    "string starts with a number",
+		},
+		"too short": {
+			expected: uuid.Nil,
+			value:    "string contains1 some numb2ers",
+		},
+		"16 byte as string": {
+			expected: uuid.Nil,
+			value:    "0000000000000001",
+		},
+		"compressed": {
+			expected: uuid.MustParse("00000000-0000-0000-0000-000000000001"),
+			value:    "00000000000000000000000000000001",
+		},
+		"full": {
+			expected: uuid.MustParse("00000000-0000-0000-0000-000000000001"),
+			value:    "00000000-0000-0000-0000-000000000001",
+		},
+	}
+
+	for name, testcase := range testcases {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
+			actual := common.Atou(testcase.value)
+			assert.Equal(t, testcase.expected, actual)
 		})
 	}
 }
