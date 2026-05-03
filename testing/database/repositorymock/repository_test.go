@@ -79,6 +79,16 @@ func TestRepositoryMock_Get(t *testing.T) {
 	assert.Equal(t, []modelmock.ModelMock{model}, get)
 }
 
+func TestRepositoryMock_Lock(t *testing.T) {
+	t.Parallel()
+
+	repository := repositorymock.RepositoryMock[modelmock.ModelMock]{}
+
+	result := repository.Lock()
+
+	assert.Equal(t, repository, result)
+}
+
 func TestRepositoryMock_One(t *testing.T) {
 	t.Parallel()
 
