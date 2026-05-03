@@ -212,6 +212,22 @@ func TestRepository_Get_QueryError(t *testing.T) {
 	assert.Nil(t, result)
 }
 
+func TestRepository_Lock(t *testing.T) {
+	t.Parallel()
+
+	connection, _ := ormmock.New(t)
+	instance := Repository[modelmock.ModelMock](&Database{orm: connection})
+
+	locked := instance.Lock()
+
+	assert.NotEqual(t, instance, locked)
+
+	actual, ok := locked.(repository[modelmock.ModelMock])
+
+	require.True(t, ok)
+	assert.Equal(t, []clause.Expression{clause.Locking{Strength: "UPDATE", Options: "SKIP LOCKED"}}, actual.clauses)
+}
+
 func TestRepository_One(t *testing.T) {
 	t.Parallel()
 
@@ -512,6 +528,7 @@ func TestRepository_addMeta(t *testing.T) {
 
 	// test everything is empty
 	assert.False(t, transaction.Statement.Unscoped)
+	assert.Equal(t, map[string]clause.Clause{}, transaction.Statement.Clauses)
 	assert.Equal(t, map[string][]any(nil), transaction.Statement.Preloads)
 
 	// add bypass delete
@@ -520,6 +537,16 @@ func TestRepository_addMeta(t *testing.T) {
 
 	assert.True(t, transaction.Statement.Unscoped)
 
+	// add lock clause
+	actual.clauses = []clause.Expression{clause.Locking{Options: clause.LockingOptionsSkipLocked, Strength: clause.LockingStrengthUpdate}}
+	transaction = actual.addMeta(connection.ORM())
+
+	assert.Equal(
+		t,
+		map[string]clause.Clause{"FOR": {Name: "FOR", Expression: clause.Locking{Strength: "UPDATE", Options: "SKIP LOCKED"}}},
+		transaction.Statement.Clauses,
+	)
+
 	// add order by
 	actual.order = []Order{{Column: "id"}}
 	transaction = actual.addMeta(connection.orm)
@@ -527,6 +554,7 @@ func TestRepository_addMeta(t *testing.T) {
 	assert.Equal(
 		t,
 		map[string]clause.Clause{
+			"FOR":      {Name: "FOR", Expression: clause.Locking{Strength: "UPDATE", Options: "SKIP LOCKED"}},
 			"ORDER BY": {Name: "ORDER BY", Expression: clause.OrderBy{Columns: []clause.OrderByColumn{{Column: clause.Column{Name: "id asc", Raw: true}}}}},
 		},
 		transaction.Statement.Clauses,

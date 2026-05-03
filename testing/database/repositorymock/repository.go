@@ -36,6 +36,11 @@ func (r RepositoryMock[m]) Get(where ...any) ([]m, error) {
 	return r.GetMock(where...)
 }
 
+// Lock do nothing.
+func (r RepositoryMock[m]) Lock() database.Persister[m] {
+	return r
+}
+
 // One run OneMock() function.
 func (r RepositoryMock[m]) One(where ...any) (*m, error) {
 	return r.OneMock(where...)

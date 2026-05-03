@@ -3,6 +3,7 @@ package database
 import (
 	"github.com/carlmjohnson/truthy"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	"sjdaws.com/pkg/errors"
 )
@@ -13,6 +14,7 @@ type Persister[m Model] interface { //nolint:interfacebloat // Interface contain
 	Create(model *m) error
 	Delete(model *m, where ...any) error
 	Get(where ...any) ([]m, error)
+	Lock() Persister[m]
 	One(where ...any) (*m, error)
 	OrderBy(order ...Order) Persister[m]
 	PartOf(connection *gorm.DB) Persister[m]
@@ -39,6 +41,7 @@ type Raw struct {
 
 // repository base repository which all repositories extend.
 type repository[m Model] struct {
+	clauses    []clause.Expression
 	connection *gorm.DB
 	model      m
 	models     []m
@@ -62,6 +65,7 @@ func Repository[m Model](connection Connection) Persister[m] {
 	var model m
 
 	instance := repository[m]{
+		clauses:    make([]clause.Expression, 0),
 		connection: connection.ORM(),
 		model:      model,
 		models:     make([]m, 0),
@@ -113,6 +117,18 @@ func (r repository[m]) Get(where ...any) ([]m, error) {
 	}
 
 	return r.models, nil
+}
+
+// Lock records from a query for update.
+func (r repository[m]) Lock() Persister[m] {
+	transaction := r
+	transaction.clauses = r.clauses
+	transaction.clauses = append(
+		transaction.clauses,
+		clause.Locking{Options: clause.LockingOptionsSkipLocked, Strength: clause.LockingStrengthUpdate, Table: clause.Table{Alias: "", Name: "", Raw: false}},
+	)
+
+	return transaction
 }
 
 // One fetches a single record from a query.
@@ -188,6 +204,10 @@ func (r repository[m]) With(relationship string, where ...any) Persister[m] {
 func (r repository[m]) addMeta(transaction *gorm.DB) *gorm.DB {
 	if r.unscoped {
 		transaction = transaction.Unscoped()
+	}
+
+	if len(r.clauses) > 0 {
+		transaction = transaction.Clauses(r.clauses...)
 	}
 
 	for _, by := range r.order {
