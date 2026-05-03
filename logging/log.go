@@ -10,7 +10,7 @@ import (
 
 	"github.com/fatih/color"
 
-	"github.com/sjdaws/pkg/errors"
+	"sjdaws.com/pkg/errors"
 )
 
 // Log implementation to Logger.

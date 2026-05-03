@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/driver/postgres"
 
-	"github.com/sjdaws/pkg/database/drivers"
+	"sjdaws.com/pkg/database/drivers"
 )
 
 func TestPostgreSQL_GetDialector(t *testing.T) {

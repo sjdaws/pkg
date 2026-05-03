@@ -9,6 +9,7 @@ import (
 // PublicError errors which can be exposed to end users.
 type PublicError struct {
 	InternalError
+
 	code   int
 	errors []string
 }
@@ -25,9 +26,9 @@ func Public(err error, code int, message ...string) error {
 	}
 
 	// If err is an InternalError, use directly
-	var previous InternalError
 
-	if errors.As(err, &previous) {
+	previous, ok := errors.AsType[InternalError](err)
+	if ok {
 		internal = previous
 	}
 
@@ -58,13 +59,12 @@ func (e InternalError) Unwrap() error {
 // original continuously unwraps an error until the original error is found.
 func (e InternalError) original() error {
 	next := e.Unwrap()
-
 	if next == nil {
 		return e
 	}
 
-	var err InternalError
-	if errors.As(next, &err) {
+	err, ok := errors.AsType[InternalError](next)
+	if ok {
 		return err.original()
 	}
 

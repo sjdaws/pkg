@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/sjdaws/pkg/database/drivers"
+	"sjdaws.com/pkg/database/drivers"
 )
 
 func TestSQLite3_GetDialector(t *testing.T) {

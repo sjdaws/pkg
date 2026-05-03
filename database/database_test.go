@@ -7,8 +7,8 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
-	"github.com/sjdaws/pkg/database"
-	"github.com/sjdaws/pkg/testing/database/modelmock"
+	"sjdaws.com/pkg/database"
+	"sjdaws.com/pkg/testing/database/modelmock"
 )
 
 func TestConnect(t *testing.T) {

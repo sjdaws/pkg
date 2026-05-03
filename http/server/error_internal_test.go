@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/sjdaws/pkg/errors"
-	"github.com/sjdaws/pkg/testing/logging/logmock"
+	"sjdaws.com/pkg/errors"
+	"sjdaws.com/pkg/testing/logging/logmock"
 )
 
 func TestHandler(t *testing.T) {

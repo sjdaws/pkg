@@ -7,14 +7,14 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/sjdaws/pkg/errors"
+	"sjdaws.com/pkg/errors"
 )
 
 // UUID type.
 type UUID uuid.UUID //nolint:recvcheck // UnmarshalJSON requires a pointer while remaining methods require value
 
 // Nil empty UUID.
-var Nil UUID //nolint:gochecknoglobals // Emulating uuid.Nil from google/uuid
+var Nil UUID //nolint:gochecknoglobals // Emulating uuid.Nil from github.com/google/uuid
 
 // MustParse parse a UUID string and panic if it fails.
 func MustParse(value string) UUID {
@@ -48,7 +48,7 @@ func (u UUID) MarshalJSON() ([]byte, error) {
 }
 
 // Scan implements sql.Scanner so UUIDs can be read from databases transparently.
-func (uuid *UUID) Scan(value interface{}) error {
+func (u *UUID) Scan(value any) error {
 	switch source := value.(type) {
 	case nil:
 		return nil
@@ -65,7 +65,7 @@ func (uuid *UUID) Scan(value interface{}) error {
 			return errors.Wrap(err, "unable to parse uuid string '%s'", source)
 		}
 
-		*uuid = parsed
+		*u = parsed
 
 	case []byte:
 		// if an empty UUID comes from a table, we return a null UUID
@@ -76,10 +76,10 @@ func (uuid *UUID) Scan(value interface{}) error {
 		// assumes a simple slice of bytes if 16 bytes otherwise attempts to parse
 		const simpleSize = 16
 		if len(source) != simpleSize {
-			return uuid.Scan(string(source))
+			return u.Scan(string(source))
 		}
 
-		copy((*uuid)[:], source)
+		copy((*u)[:], source)
 
 	default:
 		return errors.New("invalid uuid type '%T'", source)
@@ -120,6 +120,6 @@ func (u *UUID) UnmarshalJSON(data []byte) error {
 // Value implements sql.Valuer so that UUIDs can be written to databases transparently.
 //
 //nolint:ireturn // return value is determined by database driver interface.
-func (uuid UUID) Value() (driver.Value, error) {
-	return uuid.String(), nil
+func (u UUID) Value() (driver.Value, error) {
+	return u.String(), nil
 }

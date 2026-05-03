@@ -7,7 +7,7 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
-	"github.com/sjdaws/pkg/errors"
+	"sjdaws.com/pkg/errors"
 )
 
 // PostgreSQL options available when connecting to this driver.

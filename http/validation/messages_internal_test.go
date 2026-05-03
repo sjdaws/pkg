@@ -114,6 +114,6 @@ func (v *validationError) Type() reflect.Type {
 }
 
 //nolint:ireturn // Return type defined by validator.FieldError interface.
-func (v *validationError) Value() interface{} {
+func (v *validationError) Value() any {
 	return v.message
 }

@@ -1,13 +1,14 @@
 package ffmpeg
 
 import (
+	"context"
 	"fmt"
 	"os/exec"
 	"strings"
 
 	"github.com/go-cmd/cmd"
 
-	"github.com/sjdaws/pkg/errors"
+	"sjdaws.com/pkg/errors"
 )
 
 // Conversion ready to be passed to ffmpeg.
@@ -45,10 +46,10 @@ func Input(filename string, options ...Option) *Request {
 }
 
 // Supports determine if a specific codec is supported.
-func Supports(codec string) bool {
+func Supports(ctx context.Context, codec string) bool {
 	var stdOut strings.Builder
 
-	command := exec.Command("ffmpeg", "-codecs")
+	command := exec.CommandContext(ctx, "ffmpeg", "-codecs")
 	command.Stdout = &stdOut
 
 	// Errors don't matter here, if ffmpeg is missing there are bigger issues
@@ -98,7 +99,7 @@ func (c *Conversion) Force() *Conversion {
 }
 
 // Run a transformation.
-func (c *Conversion) Run() error {
+func (c *Conversion) Run(ctx context.Context) error {
 	arguments, err := c.getCommandArguments()
 	if err != nil {
 		return errors.Wrap(err, "unable to determine command arguments")
@@ -107,7 +108,7 @@ func (c *Conversion) Run() error {
 	var stdErr strings.Builder
 
 	//nolint:gosec // Assignment to variable intentional to overload stderr
-	command := exec.Command("ffmpeg", arguments...)
+	command := exec.CommandContext(ctx, "ffmpeg", arguments...)
 	command.Stderr = &stdErr
 
 	err = command.Run()
@@ -132,7 +133,7 @@ func (c *Conversion) getCommandArguments() ([]string, error) {
 		return nil, errors.New("output filename is required")
 	}
 
-	args := []string{"-hide_banner", "-v", "error"}
+	args := []string{"-hide_banner", "-v", "error"} //nolint:goconst // Default parameters only repeated in test file.
 	args = append(args, c.processOptions(c.input.options)...)
 	args = append(args, "-i", c.input.filename)
 	args = append(args, c.processOptions(c.output.options)...)
@@ -159,7 +160,8 @@ func (c *Conversion) processOptions(options []Option) []string {
 
 		if option.Value != nil {
 			// Remove quotes from args
-			if value, ok := option.Value.(string); ok {
+			value, ok := option.Value.(string)
+			if ok {
 				option.Value = strings.TrimSpace(strings.Trim(strings.TrimSpace(value), `"`))
 			}
 

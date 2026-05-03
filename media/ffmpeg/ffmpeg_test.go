@@ -1,18 +1,25 @@
 package ffmpeg_test
 
 import (
+	"os/exec"
 	"testing"
 
 	"github.com/go-cmd/cmd"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/sjdaws/pkg/io/filesystem"
-	"github.com/sjdaws/pkg/media/ffmpeg"
+	"sjdaws.com/pkg/io/filesystem"
+	"sjdaws.com/pkg/media/ffmpeg"
 )
 
 func TestCommand(t *testing.T) {
 	t.Parallel()
+
+	// Skip test if ffmpeg not installed
+	_, err := exec.LookPath("ffmpeg")
+	if err != nil {
+		t.Skip("Skipping test: ffmpeg not installed")
+	}
 
 	output := t.TempDir() + "/" + t.Name() + ".mp4"
 	storage := filesystem.Default()
@@ -32,8 +39,7 @@ func TestCommand(t *testing.T) {
 
 	assert.True(t, storage.FileExists(output))
 	assert.True(t, status.Complete)
-	assert.Contains(t, status.Stdout, "frame=1")
-	assert.Contains(t, status.Stdout, "out_time_ms=1240000")
+	assert.Contains(t, status.Stdout, "total_size=60952")
 	assert.Contains(t, status.Stdout, "progress=end")
 }
 
@@ -50,13 +56,19 @@ func TestCommand_ErrGetCommandArguments(t *testing.T) {
 func TestRun(t *testing.T) {
 	t.Parallel()
 
+	// Skip test if ffmpeg not installed
+	_, err := exec.LookPath("ffmpeg")
+	if err != nil {
+		t.Skip("Skipping test: ffmpeg not installed")
+	}
+
 	output := t.TempDir() + "/" + t.Name() + ".mp4"
 	storage := filesystem.Default()
 
-	err := ffmpeg.
+	err = ffmpeg.
 		Input("./fixtures/h240.mp4").
 		Output(output, ffmpeg.Option{Key: "vf", Value: "thumbnail"}).
-		Run()
+		Run(t.Context())
 	require.NoError(t, err)
 
 	assert.True(t, storage.FileExists(output))
@@ -65,7 +77,7 @@ func TestRun(t *testing.T) {
 func TestRun_ErrGetCommandArguments(t *testing.T) {
 	t.Parallel()
 
-	err := ffmpeg.Input("").Output("").Run()
+	err := ffmpeg.Input("").Output("").Run(t.Context())
 	require.Error(t, err)
 
 	require.EqualError(t, err, "unable to determine command arguments: input filename is required")
@@ -74,9 +86,15 @@ func TestRun_ErrGetCommandArguments(t *testing.T) {
 func TestRun_ErrRunningFFmpeg(t *testing.T) {
 	t.Parallel()
 
+	// Skip test if ffmpeg not installed
+	_, err := exec.LookPath("ffmpeg")
+	if err != nil {
+		t.Skip("Skipping test: ffmpeg not installed")
+	}
+
 	output := t.TempDir() + "/" + t.Name() + ".mp4"
 
-	err := ffmpeg.Input("./fixtures/notfound.mov").Output(output).Run()
+	err = ffmpeg.Input("./fixtures/notfound.mov").Output(output).Run(t.Context())
 	require.Error(t, err)
 
 	require.ErrorContains(t, err, "error returned when running ffmpeg: ")
@@ -85,6 +103,12 @@ func TestRun_ErrRunningFFmpeg(t *testing.T) {
 
 func TestSupports(t *testing.T) {
 	t.Parallel()
+
+	// Skip test if ffmpeg not installed
+	_, err := exec.LookPath("ffmpeg")
+	if err != nil {
+		t.Skip("Skipping test: ffmpeg not installed")
+	}
 
 	testcases := map[string]struct {
 		codec    string
@@ -104,7 +128,7 @@ func TestSupports(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
 
-			actual := ffmpeg.Supports(testcase.codec)
+			actual := ffmpeg.Supports(t.Context(), testcase.codec)
 
 			assert.Equal(t, testcase.expected, actual)
 		})

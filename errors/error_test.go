@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/sjdaws/pkg/errors"
+	"sjdaws.com/pkg/errors"
 )
 
 var errErrorPackage = errors.New("original error")

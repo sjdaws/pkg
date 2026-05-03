@@ -7,10 +7,10 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
-	"github.com/sjdaws/pkg/database"
-	"github.com/sjdaws/pkg/errors"
-	"github.com/sjdaws/pkg/testing/database/modelmock"
-	"github.com/sjdaws/pkg/testing/database/repositorymock"
+	"sjdaws.com/pkg/database"
+	"sjdaws.com/pkg/errors"
+	"sjdaws.com/pkg/testing/database/modelmock"
+	"sjdaws.com/pkg/testing/database/repositorymock"
 )
 
 func TestRepositoryMock(t *testing.T) {

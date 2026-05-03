@@ -5,8 +5,8 @@ import (
 
 	"github.com/spf13/afero"
 
-	"github.com/sjdaws/pkg/io"
-	"github.com/sjdaws/pkg/io/filesystem"
+	"sjdaws.com/pkg/io"
+	"sjdaws.com/pkg/io/filesystem"
 )
 
 // ReadWriterMock io.ReadWriter compliant struct for testing.

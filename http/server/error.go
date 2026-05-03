@@ -3,7 +3,7 @@ package server
 import (
 	"github.com/labstack/echo/v4"
 
-	"github.com/sjdaws/pkg/logging"
+	"sjdaws.com/pkg/logging"
 )
 
 // errorHandler implementation.

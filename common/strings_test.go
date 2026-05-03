@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/sjdaws/pkg/common"
-	"github.com/sjdaws/pkg/uuid"
+	"sjdaws.com/pkg/common"
+	"sjdaws.com/pkg/uuid"
 )
 
 func TestAtoi(t *testing.T) {

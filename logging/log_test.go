@@ -9,8 +9,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/sjdaws/pkg/errors"
-	"github.com/sjdaws/pkg/logging"
+	"sjdaws.com/pkg/errors"
+	"sjdaws.com/pkg/logging"
 )
 
 var (
@@ -223,13 +223,6 @@ func newWriter() *stdout {
 	}
 }
 
-func (s *stdout) read() []byte {
-	s.mutex.Lock()
-	defer s.mutex.Unlock()
-
-	return s.data
-}
-
 func (s *stdout) Write(data []byte) (int, error) {
 	s.mutex.Lock()
 	defer s.mutex.Unlock()
@@ -241,6 +234,13 @@ func (s *stdout) Write(data []byte) (int, error) {
 	}
 
 	return len(data), nil
+}
+
+func (s *stdout) read() []byte {
+	s.mutex.Lock()
+	defer s.mutex.Unlock()
+
+	return s.data
 }
 
 type expected struct {

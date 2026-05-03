@@ -8,8 +8,8 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
-	"github.com/sjdaws/pkg/database"
-	"github.com/sjdaws/pkg/testing/database/connectionmock"
+	"sjdaws.com/pkg/database"
+	"sjdaws.com/pkg/testing/database/connectionmock"
 )
 
 func TestNew(t *testing.T) {

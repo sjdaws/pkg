@@ -8,7 +8,7 @@ import (
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
 
-	"github.com/sjdaws/pkg/uuid"
+	"sjdaws.com/pkg/uuid"
 )
 
 // Atof convert string to float ignoring errors.
@@ -85,6 +85,7 @@ func Mask(value string, maxLength int) string {
 // option can be prefixed with an inclusive/exclusive prefix, e.g. or/and.
 func Options(options string, finalPrefix string) string {
 	values := strings.Split(options, " ")
+
 	words := make([]string, 0)
 
 	for _, value := range values {

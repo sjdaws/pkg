@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/sjdaws/pkg/testing/http/cookiemock"
+	"sjdaws.com/pkg/testing/http/cookiemock"
 )
 
 func TestCookie_Get(t *testing.T) {

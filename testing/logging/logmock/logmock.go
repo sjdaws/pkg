@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/sjdaws/pkg/logging"
+	"sjdaws.com/pkg/logging"
 )
 
 type LogMock struct {

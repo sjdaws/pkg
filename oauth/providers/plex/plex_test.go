@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/sjdaws/pkg/oauth/providers"
-	"github.com/sjdaws/pkg/oauth/providers/plex"
+	"sjdaws.com/pkg/oauth/providers"
+	"sjdaws.com/pkg/oauth/providers/plex"
 )
 
 func TestNew(t *testing.T) {

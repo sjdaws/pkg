@@ -4,7 +4,7 @@ import (
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 
-	"github.com/sjdaws/pkg/oauth/providers"
+	"sjdaws.com/pkg/oauth/providers"
 )
 
 // Google oauth2 provider.

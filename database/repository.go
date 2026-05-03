@@ -4,11 +4,11 @@ import (
 	"github.com/carlmjohnson/truthy"
 	"gorm.io/gorm"
 
-	"github.com/sjdaws/pkg/errors"
+	"sjdaws.com/pkg/errors"
 )
 
 // Persister interface.
-type Persister[m Model] interface {
+type Persister[m Model] interface { //nolint:interfacebloat // Interface contains all database functionality
 	BypassDelete() Persister[m]
 	Create(model *m) error
 	Delete(model *m, where ...any) error

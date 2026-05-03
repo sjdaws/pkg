@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/driver/sqlserver"
 
-	"github.com/sjdaws/pkg/database/drivers"
+	"sjdaws.com/pkg/database/drivers"
 )
 
 func TestSQLServer_GetDialector(t *testing.T) {

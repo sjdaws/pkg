@@ -1,18 +1,25 @@
 package ffprobe_test
 
 import (
+	"os/exec"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/sjdaws/pkg/media/ffprobe"
+	"sjdaws.com/pkg/media/ffprobe"
 )
 
 func TestProbe(t *testing.T) {
 	t.Parallel()
 
-	actual, err := ffprobe.Probe("./fixtures/h240.mp4")
+	// Skip test if ffprobe not installed
+	_, err := exec.LookPath("ffprobe")
+	if err != nil {
+		t.Skip("Skipping test: ffprobe not installed")
+	}
+
+	actual, err := ffprobe.Probe(t.Context(), "./fixtures/h240.mp4")
 	require.NoError(t, err)
 
 	expected := &ffprobe.Result{
@@ -70,7 +77,7 @@ func TestProbe(t *testing.T) {
 func TestProbe_ErrMissingFilename(t *testing.T) {
 	t.Parallel()
 
-	actual, err := ffprobe.Probe("")
+	actual, err := ffprobe.Probe(t.Context(), "")
 	require.Error(t, err)
 
 	require.EqualError(t, err, "filename is required")
@@ -80,7 +87,13 @@ func TestProbe_ErrMissingFilename(t *testing.T) {
 func TestProbe_ErrRunningFFprobe(t *testing.T) {
 	t.Parallel()
 
-	actual, err := ffprobe.Probe("./fixtures/notfound.mov")
+	// Skip test if ffprobe not installed
+	_, err := exec.LookPath("ffprobe")
+	if err != nil {
+		t.Skip("Skipping test: ffprobe not installed")
+	}
+
+	actual, err := ffprobe.Probe(t.Context(), "./fixtures/notfound.mov")
 	require.Error(t, err)
 
 	require.EqualError(t, err, "error returned when running ffprobe: ./fixtures/notfound.mov: No such file or directory\n")

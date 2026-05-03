@@ -3,7 +3,7 @@ package slack
 import (
 	"golang.org/x/oauth2"
 
-	"github.com/sjdaws/pkg/oauth/providers"
+	"sjdaws.com/pkg/oauth/providers"
 )
 
 // Slack oauth2 provider.
@@ -18,7 +18,7 @@ func New(callbackURL string, clientID string, clientSecret string, _ map[string]
 			Config: &oauth2.Config{
 				ClientID:     clientID,
 				ClientSecret: clientSecret,
-				Endpoint: oauth2.Endpoint{
+				Endpoint: oauth2.Endpoint{ //nolint:gosec // Credentials are not hardcoded
 					AuthStyle:     oauth2.AuthStyleAutoDetect,
 					AuthURL:       "https://slack.com/openid/connect/authorize",
 					DeviceAuthURL: "",

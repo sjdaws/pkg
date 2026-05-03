@@ -1,0 +1,9 @@
+exclude:
+  paths:
+    - \.pb\.go$  # exclude protobuf generated files
+force-annotation-comment: true
+profile: cover.out
+threshold:
+  file: 100
+  package: 100
+  total: 100

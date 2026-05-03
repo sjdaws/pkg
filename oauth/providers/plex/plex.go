@@ -12,8 +12,8 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/sjdaws/pkg/errors"
-	"github.com/sjdaws/pkg/oauth/providers"
+	"sjdaws.com/pkg/errors"
+	"sjdaws.com/pkg/oauth/providers"
 )
 
 // Plex is the authentication provider for plex.
@@ -148,7 +148,8 @@ func (a *Plex) request(ctx context.Context, method string, endpoint string, body
 		return errors.Wrap(err, providers.ErrInvalidResponseCode, response.StatusCode)
 	}
 
-	if err := json.NewDecoder(response.Body).Decode(&decode); err != nil {
+	err = json.NewDecoder(response.Body).Decode(&decode)
+	if err != nil {
 		return errors.Wrap(err, providers.ErrInvalidYAML)
 	}
 

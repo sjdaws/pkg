@@ -6,8 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/oauth2"
 
-	"github.com/sjdaws/pkg/oauth/providers"
-	"github.com/sjdaws/pkg/oauth/providers/slack"
+	"sjdaws.com/pkg/oauth/providers"
+	"sjdaws.com/pkg/oauth/providers/slack"
 )
 
 func TestNew(t *testing.T) {
@@ -19,7 +19,7 @@ func TestNew(t *testing.T) {
 			Config: &oauth2.Config{
 				ClientID:     "id",
 				ClientSecret: "secret",
-				Endpoint: oauth2.Endpoint{
+				Endpoint: oauth2.Endpoint{ //nolint:gosec // Credentials are not hardcoded
 					AuthURL:  "https://slack.com/openid/connect/authorize",
 					TokenURL: "https://slack.com/api/openid.connect.token",
 				},

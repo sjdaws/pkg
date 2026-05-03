@@ -7,8 +7,8 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
-	"github.com/sjdaws/pkg/database/drivers"
-	"github.com/sjdaws/pkg/errors"
+	"sjdaws.com/pkg/database/drivers"
+	"sjdaws.com/pkg/errors"
 )
 
 // Connection interface.
@@ -122,6 +122,8 @@ func createConfiguration(logMode logger.LogLevel) *gorm.Config {
 		ClauseBuilders:                           nil,
 		ConnPool:                                 nil,
 		CreateBatchSize:                          0,
+		DefaultTransactionTimeout:                0,
+		DefaultContextTimeout:                    0,
 		Dialector:                                nil,
 		DisableAutomaticPing:                     false,
 		DisableForeignKeyConstraintWhenMigrating: false,
@@ -134,6 +136,8 @@ func createConfiguration(logMode logger.LogLevel) *gorm.Config {
 		NowFunc:                                  nil,
 		Plugins:                                  nil,
 		PrepareStmt:                              false,
+		PrepareStmtMaxSize:                       0,
+		PrepareStmtTTL:                           0,
 		PropagateUnscoped:                        false,
 		QueryFields:                              false,
 		SkipDefaultTransaction:                   false,

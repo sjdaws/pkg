@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"golang.org/x/oauth2"
 
-	"github.com/sjdaws/pkg/oauth/providers"
+	"sjdaws.com/pkg/oauth/providers"
 )
 
 const (

@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/sjdaws/pkg/http/validation"
+	"sjdaws.com/pkg/http/validation"
 )
 
 func TestNew(t *testing.T) {
@@ -108,11 +108,9 @@ func TestValidate_Failure(t *testing.T) {
 func TestValidate_InvalidTarget(t *testing.T) {
 	t.Parallel()
 
-	target := "test"
-
 	instance := validation.New()
 
-	failures, err := instance.Validate(&target)
+	failures, err := instance.Validate(new("test"))
 	require.Error(t, err)
 
 	require.EqualError(t, err, "unable to perform validation: validator: (nil *string)")

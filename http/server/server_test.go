@@ -7,8 +7,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 
-	"github.com/sjdaws/pkg/http/server"
-	"github.com/sjdaws/pkg/testing/logging/logmock"
+	"sjdaws.com/pkg/http/server"
+	"sjdaws.com/pkg/testing/logging/logmock"
 )
 
 func TestNew(t *testing.T) {
@@ -38,7 +38,7 @@ func TestNew(t *testing.T) {
 		{
 			Method: http.MethodGet,
 			Path:   "/",
-			Name:   "github.com/sjdaws/pkg/http/server_test.TestNew.func2",
+			Name:   "sjdaws.com/pkg/http/server_test.TestNew.func2",
 		},
 		{
 			Method: http.MethodGet,

@@ -6,8 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/sjdaws/pkg/logging"
-	"github.com/sjdaws/pkg/testing/logging/logmock"
+	"sjdaws.com/pkg/logging"
+	"sjdaws.com/pkg/testing/logging/logmock"
 )
 
 func TestLogMock_Debug(t *testing.T) {

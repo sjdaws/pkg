@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/sjdaws/pkg/errors"
+	"sjdaws.com/pkg/errors"
 )
 
 // Cookie implementation.
@@ -44,7 +44,7 @@ func (c *Cookie) Set(writer http.ResponseWriter, name string, value string, expi
 		return errors.New("unable to set cookie, nil http.ResponseWriter")
 	}
 
-	cookie := c.create(name, expires)
+	cookie := c.create(name, expires) //nolint:gosec // False positive, cookie is secure
 	cookie.Value = value
 
 	http.SetCookie(writer, cookie)
@@ -59,8 +59,7 @@ func (c *Cookie) Unset(writer http.ResponseWriter, name string) error {
 		return errors.New("unable to unset cookie, nil http.ResponseWriter")
 	}
 
-	currentTime := time.Now()
-	http.SetCookie(writer, c.create(name, &currentTime))
+	http.SetCookie(writer, c.create(name, new(time.Now())))
 
 	return nil
 }
@@ -79,8 +78,8 @@ func (c *Cookie) create(name string, expires *time.Time) *http.Cookie {
 		Quoted:      false,
 		Raw:         "",
 		RawExpires:  "",
-		SameSite:    0,
-		Secure:      false,
+		SameSite:    http.SameSiteStrictMode,
+		Secure:      true,
 		Unparsed:    nil,
 	}
 

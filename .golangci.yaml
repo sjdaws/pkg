@@ -3,18 +3,18 @@ version: "2"
 linters:
   default: all
   disable:
-    - lll           # long live the long line
-    - tagliatelle   # we don't control what third parties use for their API
+    - lll          # long live the long line
+    - gomodguard   # replaced by gomodguard_v2
+    - prealloc     # clashes with make zero
+    - tagliatelle  # we don't control what third parties use for their API
+    - wsl          # replaced by wsl_v5
   exclusions:
     rules:
       - linters:
-          - exhaustruct
-          - funlen
-          - varnamelen
+          - exhaustruct  # tests only populate data as needed
+          - funlen       # test functions are long by design
+          - goconst      # tests often explicitly reuse values
         path: _test.go
-      - linters:
-          - interfacebloat
-        path: database/repository.go
   settings:
     depguard:
       rules:
@@ -23,7 +23,7 @@ linters:
           files:
             - $all
           deny:
-            - pkg: github.com/sjdaws/pkg/testing/connectionmock
+            - pkg: sjdaws.com/pkg/testing/connectionmock
               desc: you're doing this the hard way, use repositorymock instead
     ireturn:
       allow:
@@ -33,10 +33,6 @@ linters:
       rules:
         - name: package-comments
           disabled: true
-    tagliatelle:
-      case:
-        rules:
-          json: snake
 
 formatters:
   enable:
@@ -49,4 +45,4 @@ formatters:
       sections:
         - standard
         - default
-        - prefix(github.com/sjdaws/pkg)
+        - prefix(sjdaws.com/pkg)

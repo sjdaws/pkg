@@ -7,8 +7,8 @@ import (
 	"golang.org/x/oauth2"
 	provider "golang.org/x/oauth2/microsoft"
 
-	"github.com/sjdaws/pkg/oauth/providers"
-	"github.com/sjdaws/pkg/oauth/providers/azure"
+	"sjdaws.com/pkg/oauth/providers"
+	"sjdaws.com/pkg/oauth/providers/azure"
 )
 
 func TestNew(t *testing.T) {
