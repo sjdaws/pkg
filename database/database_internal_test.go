@@ -6,8 +6,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/sjdaws/pkg/testing/database/modelmock"
-	"github.com/sjdaws/pkg/testing/database/ormmock"
+	"sjdaws.com/pkg/testing/database/modelmock"
+	"sjdaws.com/pkg/testing/database/ormmock"
 )
 
 func TestConnection_Migrate(t *testing.T) {

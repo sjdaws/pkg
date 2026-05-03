@@ -8,8 +8,8 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 
-	"github.com/sjdaws/pkg/database/drivers"
-	"github.com/sjdaws/pkg/errors"
+	"sjdaws.com/pkg/database/drivers"
+	"sjdaws.com/pkg/errors"
 )
 
 // DatabaseMock mock database instance.
@@ -30,11 +30,9 @@ func New(t *testing.T, options ...Options) *DatabaseMock {
 	t.Helper()
 
 	// Process options
-	var debug, fail, file bool
+	var file bool
 
 	if len(options) > 0 {
-		debug = options[0].DebugMode
-		fail = options[0].AlwaysFail
 		file = options[0].FileBased
 	}
 
@@ -44,7 +42,11 @@ func New(t *testing.T, options ...Options) *DatabaseMock {
 		// Create temporary database
 		filename = t.TempDir() + "/test.db"
 
-		_, err := os.Create(filename)
+		database, err := os.Create(filename)
+		defer func() {
+			_ = database.Close()
+		}()
+
 		require.NoError(t, err)
 	}
 
@@ -56,40 +58,7 @@ func New(t *testing.T, options ...Options) *DatabaseMock {
 	dialector, err := driver.GetDialector()
 	require.NoError(t, err)
 
-	config := &gorm.Config{
-		AllowGlobalUpdate:                        false,
-		ClauseBuilders:                           nil,
-		ConnPool:                                 nil,
-		CreateBatchSize:                          0,
-		Dialector:                                nil,
-		DisableAutomaticPing:                     false,
-		DisableForeignKeyConstraintWhenMigrating: false,
-		DisableNestedTransaction:                 false,
-		DryRun:                                   false,
-		FullSaveAssociations:                     false,
-		IgnoreRelationshipsWhenMigrating:         false,
-		Logger:                                   nil,
-		NamingStrategy:                           nil,
-		NowFunc:                                  nil,
-		Plugins:                                  nil,
-		PrepareStmt:                              false,
-		PropagateUnscoped:                        false,
-		QueryFields:                              false,
-		SkipDefaultTransaction:                   false,
-		TranslateError:                           false,
-	}
-
-	if debug {
-		config.Logger = logger.Default.LogMode(logger.Info)
-	}
-
-	orm, err := gorm.Open(dialector, config)
-	require.NoError(t, err)
-
-	return &DatabaseMock{
-		Fail: fail,
-		orm:  orm,
-	}
+	return create(t, dialector, options...)
 }
 
 // Migrate perform database migrations.
@@ -116,4 +85,56 @@ func (d *DatabaseMock) Transaction() *gorm.DB {
 	}
 
 	return transaction
+}
+
+// create a DatabaseMock from a gorm.Dialector.
+func create(t *testing.T, dialector gorm.Dialector, options ...Options) *DatabaseMock {
+	t.Helper()
+
+	// Process options
+	var debug, fail bool
+
+	if len(options) > 0 {
+		debug = options[0].DebugMode
+		fail = options[0].AlwaysFail
+	}
+
+	config := &gorm.Config{
+		AllowGlobalUpdate:                        false,
+		ClauseBuilders:                           nil,
+		ConnPool:                                 nil,
+		CreateBatchSize:                          0,
+		DefaultTransactionTimeout:                0,
+		DefaultContextTimeout:                    0,
+		Dialector:                                nil,
+		DisableAutomaticPing:                     false,
+		DisableForeignKeyConstraintWhenMigrating: false,
+		DisableNestedTransaction:                 false,
+		DryRun:                                   false,
+		FullSaveAssociations:                     false,
+		IgnoreRelationshipsWhenMigrating:         false,
+		Logger:                                   nil,
+		NamingStrategy:                           nil,
+		NowFunc:                                  nil,
+		Plugins:                                  nil,
+		PrepareStmt:                              false,
+		PrepareStmtMaxSize:                       0,
+		PrepareStmtTTL:                           0,
+		PropagateUnscoped:                        false,
+		QueryFields:                              false,
+		SkipDefaultTransaction:                   false,
+		TranslateError:                           false,
+	}
+
+	if debug {
+		config.Logger = logger.Default.LogMode(logger.Info)
+	}
+
+	orm, err := gorm.Open(dialector, config)
+	require.NoError(t, err)
+
+	return &DatabaseMock{
+		Fail: fail,
+		orm:  orm,
+	}
 }

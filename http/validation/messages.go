@@ -5,7 +5,7 @@ import (
 
 	"github.com/go-playground/validator/v10"
 
-	"github.com/sjdaws/pkg/common"
+	"sjdaws.com/pkg/common"
 )
 
 // processFailures and convert them to sensible error messages.

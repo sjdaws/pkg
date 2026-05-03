@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/sjdaws/pkg/testing/database/ormmock"
+	"sjdaws.com/pkg/testing/database/ormmock"
 )
 
 func TestStringArg_Match(t *testing.T) {

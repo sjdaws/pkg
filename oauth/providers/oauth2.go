@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 	"golang.org/x/oauth2"
 
-	"github.com/sjdaws/pkg/errors"
+	"sjdaws.com/pkg/errors"
 )
 
 // Authenticator provider interface.
@@ -87,7 +87,8 @@ func (o *OAuth2) getUserData(ctx context.Context, client *http.Client) (*UserDat
 
 	var data map[string]any
 
-	if err = json.NewDecoder(response.Body).Decode(&data); err != nil {
+	err = json.NewDecoder(response.Body).Decode(&data)
+	if err != nil {
 		return nil, errors.Wrap(err, ErrInvalidYAML)
 	}
 

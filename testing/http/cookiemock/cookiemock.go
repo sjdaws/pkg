@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/sjdaws/pkg/errors"
+	"sjdaws.com/pkg/errors"
 )
 
 // Cookie fake cookies.GetSetter implementation.

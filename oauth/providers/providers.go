@@ -29,6 +29,6 @@ const (
 	// ErrInvalidUserData error when retrieving user data fails.
 	ErrInvalidUserData = "user data retrieval failed"
 
-	// ErrInvalidYAML error when decoding yaml fails.
+	// ErrInvalidYAML error when decoding YAML fails.
 	ErrInvalidYAML = "yaml decode failed"
 )

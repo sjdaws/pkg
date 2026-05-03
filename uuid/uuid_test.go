@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/sjdaws/pkg/uuid"
+	"sjdaws.com/pkg/uuid"
 )
 
 func TestNew(t *testing.T) {

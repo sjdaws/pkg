@@ -33,7 +33,8 @@ func (a TimeArg) Match(v driver.Value) bool {
 func (u UUIDArg) Match(v driver.Value) bool {
 	regex := `^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`
 
-	if value, ok := v.(string); ok {
+	value, ok := v.(string)
+	if ok {
 		return regexp.MustCompile(regex).MatchString(value)
 	}
 

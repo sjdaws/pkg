@@ -3,7 +3,7 @@ package repositorymock
 import (
 	"gorm.io/gorm"
 
-	"github.com/sjdaws/pkg/database"
+	"sjdaws.com/pkg/database"
 )
 
 // RepositoryMock fakes a repository.

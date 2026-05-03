@@ -4,7 +4,7 @@ import (
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/microsoft"
 
-	"github.com/sjdaws/pkg/oauth/providers"
+	"sjdaws.com/pkg/oauth/providers"
 )
 
 // Azure oauth2 provider.

@@ -5,19 +5,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/sjdaws/pkg/common"
+	"sjdaws.com/pkg/common"
 )
-
-func TestPointer(t *testing.T) {
-	t.Parallel()
-
-	actual := common.Pointer(true)
-
-	value := true
-	expected := &value
-
-	assert.Equal(t, expected, actual)
-}
 
 func TestTrue(t *testing.T) {
 	t.Parallel()
@@ -28,7 +17,7 @@ func TestTrue(t *testing.T) {
 	}{
 		"false": {
 			expected: false,
-			value:    common.Pointer(false),
+			value:    new(false),
 		},
 		"nil": {
 			expected: false,
@@ -36,7 +25,7 @@ func TestTrue(t *testing.T) {
 		},
 		"true": {
 			expected: true,
-			value:    common.Pointer(true),
+			value:    new(true),
 		},
 	}
 

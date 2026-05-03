@@ -7,8 +7,8 @@ import (
 	"golang.org/x/oauth2"
 	provider "golang.org/x/oauth2/github"
 
-	"github.com/sjdaws/pkg/oauth/providers"
-	"github.com/sjdaws/pkg/oauth/providers/github"
+	"sjdaws.com/pkg/oauth/providers"
+	"sjdaws.com/pkg/oauth/providers/github"
 )
 
 func TestNew(t *testing.T) {

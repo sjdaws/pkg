@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/sjdaws/pkg/testing/database/modelmock"
+	"sjdaws.com/pkg/testing/database/modelmock"
 )
 
 func TestModelMock_TableName(t *testing.T) {

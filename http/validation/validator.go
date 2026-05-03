@@ -3,7 +3,7 @@ package validation
 import (
 	"github.com/go-playground/validator/v10"
 
-	"github.com/sjdaws/pkg/errors"
+	"sjdaws.com/pkg/errors"
 )
 
 // Validator interface.

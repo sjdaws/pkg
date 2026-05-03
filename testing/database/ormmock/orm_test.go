@@ -8,8 +8,8 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm"
 
-	"github.com/sjdaws/pkg/errors"
-	"github.com/sjdaws/pkg/testing/database/ormmock"
+	"sjdaws.com/pkg/errors"
+	"sjdaws.com/pkg/testing/database/ormmock"
 )
 
 var (

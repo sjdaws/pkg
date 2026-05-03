@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
-	"github.com/sjdaws/pkg/http/cookies"
+	"sjdaws.com/pkg/http/cookies"
 )
 
 func TestNew(t *testing.T) {
@@ -23,9 +23,9 @@ func TestNew(t *testing.T) {
 func TestCookie_Get(t *testing.T) {
 	t.Parallel()
 
-	request := httptest.NewRequest(http.MethodGet, "http://localhost", nil)
+	request := httptest.NewRequestWithContext(t.Context(), http.MethodGet, "http://localhost", nil)
 
-	request.AddCookie(&http.Cookie{Name: "test", Value: "value"})
+	request.AddCookie(&http.Cookie{Name: "test", Value: "value"}) //nolint:gosec // Cookie is intentionally insecure for test purposes
 
 	getsetter := cookies.New()
 
@@ -48,7 +48,7 @@ func TestCookie_Set(t *testing.T) {
 	getsetter := cookies.New()
 
 	expected := make(http.Header)
-	expected["Set-Cookie"] = []string{"test=value; Path=/; HttpOnly"}
+	expected["Set-Cookie"] = []string{"test=value; Path=/; HttpOnly; Secure; SameSite=Strict"}
 
 	err := getsetter.Set(writer, "test", "value", nil)
 	require.NoError(t, err)
@@ -80,7 +80,7 @@ func TestCookie_Unset(t *testing.T) {
 	location, _ := time.LoadLocation("GMT")
 	currentTime := time.Now().In(location).Format(time.RFC1123)
 	expected := make(http.Header)
-	expected["Set-Cookie"] = []string{fmt.Sprintf("test=; Path=/; Expires=%s; HttpOnly", currentTime)}
+	expected["Set-Cookie"] = []string{fmt.Sprintf("test=; Path=/; Expires=%s; HttpOnly; Secure; SameSite=Strict", currentTime)}
 
 	err := getsetter.Unset(writer, "test")
 	require.NoError(t, err)

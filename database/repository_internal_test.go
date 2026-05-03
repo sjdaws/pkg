@@ -8,16 +8,16 @@ import (
 	"github.com/stretchr/testify/require"
 	"gorm.io/gorm/clause"
 
-	"github.com/sjdaws/pkg/errors"
-	"github.com/sjdaws/pkg/testing/database/modelmock"
-	"github.com/sjdaws/pkg/testing/database/ormmock"
+	"sjdaws.com/pkg/errors"
+	"sjdaws.com/pkg/testing/database/modelmock"
+	"sjdaws.com/pkg/testing/database/ormmock"
 )
 
 const (
 	deleteQuery  = "UPDATE `model_mocks` SET `deleted_at`=? WHERE `model_mocks`.`id` = ? AND `model_mocks`.`deleted_at` IS NULL"
 	insertQuery  = "INSERT INTO `model_mocks` (`deleted_at`,`test`) VALUES (?,?)"
 	restoreQuery = "UPDATE `model_mocks` SET `deleted_at`=? WHERE `id` = ?"
-	selectQuery  = "SELECT * FROM `model_mocks` WHERE (`model_mocks`.`id` = ? AND `model_mocks`.`test` = ?) AND `model_mocks`.`deleted_at` IS NULL"
+	selectQuery  = "SELECT * FROM `model_mocks` WHERE (`model_mocks`.`id` = ? AND `model_mocks`.`test` = ?) AND `model_mocks`.`deleted_at` IS NULL" //nolint:unqueryvet // SQL query is for comparison purposes
 	updateQuery  = "UPDATE `model_mocks` SET `deleted_at`=?,`test`=? WHERE `model_mocks`.`deleted_at` IS NULL AND `id` = ?"
 )
 
@@ -537,7 +537,7 @@ func TestRepository_addMeta(t *testing.T) {
 	transaction = actual.addMeta(connection.orm)
 
 	assert.Len(t, transaction.Statement.Preloads, 1)
-	assert.Equal(t, map[string][]interface{}{"Relation": nil}, transaction.Statement.Preloads)
+	assert.Equal(t, map[string][]any{"Relation": nil}, transaction.Statement.Preloads)
 
 	// add join
 	actual.relations = []relation{{join: true, key: "Relation"}}

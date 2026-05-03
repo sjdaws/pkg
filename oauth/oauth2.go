@@ -1,14 +1,14 @@
 package oauth
 
 import (
-	"github.com/sjdaws/pkg/errors"
-	"github.com/sjdaws/pkg/oauth/providers"
-	"github.com/sjdaws/pkg/oauth/providers/azure"
-	"github.com/sjdaws/pkg/oauth/providers/facebook"
-	"github.com/sjdaws/pkg/oauth/providers/github"
-	"github.com/sjdaws/pkg/oauth/providers/google"
-	"github.com/sjdaws/pkg/oauth/providers/plex"
-	"github.com/sjdaws/pkg/oauth/providers/slack"
+	"sjdaws.com/pkg/errors"
+	"sjdaws.com/pkg/oauth/providers"
+	"sjdaws.com/pkg/oauth/providers/azure"
+	"sjdaws.com/pkg/oauth/providers/facebook"
+	"sjdaws.com/pkg/oauth/providers/github"
+	"sjdaws.com/pkg/oauth/providers/google"
+	"sjdaws.com/pkg/oauth/providers/plex"
+	"sjdaws.com/pkg/oauth/providers/slack"
 )
 
 // Factory interface.
